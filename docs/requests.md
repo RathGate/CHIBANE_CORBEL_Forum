@@ -6,7 +6,7 @@
 <!-- Afficher le nombre de topics crées par un utilisateur -->
 
 `SELECT COUNT(*) FROM topics AS t WHERE t.user_id = 8;`
-`SELECT COUNT(*) FROM posts AS t WHERE t.user_id = 8;`
+`SELECT COUNT(*) FROM posts AS p WHERE p.user_id = 8;`
 
 <!-- Afficher les 5 derniers topics crées par un utilisateur -->
 
