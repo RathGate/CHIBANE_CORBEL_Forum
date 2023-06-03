@@ -14,7 +14,7 @@
 
 <!-- Nombre d'utilisateur -->
 
-`SELECT COUNT(*) FROM users;`
+`SELECT COUNT(*) FROM users;`dd
 
 <!-- Affichage dans la limite de 25 utilisateurs, ordre de rôle et alphabétique -->
 
