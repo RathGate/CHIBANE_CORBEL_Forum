@@ -1,5 +1,5 @@
 * {
-    box-sizing: border;
+    box-sizing: border-box;
 }
 :root {
     --color-bg: #F6F6F2;
@@ -12,4 +12,13 @@ html, body {
     background-color: var(--color-bg);
     color: var(--color-fg);
     font-family: "Noto Sans", sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
 }

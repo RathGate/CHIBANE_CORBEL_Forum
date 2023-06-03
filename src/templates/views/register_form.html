@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <title>Forum!</title>
+</head>
+<body>
+<div class="container">
+    <h1>Register form</h1>
+    <!-- REGISTER FORM -->
+    <form action="/register" method="POST">
+        <!-- USERNAME -->
+        <div>
+            <label for="username">Choose a username:</label>
+            <input type="text" id="username" name="username" required maxlength="15">
+        </div>
+        <!-- PASSWORD -->
+        <div>
+            <label for="password">Choose a password:</label>
+            <input type="password" id="password" name="password" required maxlength="255">
+        </div>
+        <!-- EMAIL -->
+        <div>
+            <label for="email">Email address:</label>
+            <input type="email" id="email" name="email" required maxlength="255">
+        </div>
+        <!-- BIRTHDATE -->
+        <div>
+
+        </div>
+        <!-- PROFILE PICTURE -->
+        <div>
+            <label for="profile_picture">Choose a profile picture:</label>
+            <input type="file" id="profile_picture" name="profile_picture">
+        </div>
+        <button type="submit">Register</button>
+    </form>
+</div>
+</body>
+</html>

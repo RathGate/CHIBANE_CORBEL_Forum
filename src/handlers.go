@@ -19,3 +19,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/views/index.html"))
 	tmpl.Execute(w, nil)
 }
+
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+
+	tmpl := template.Must(template.ParseFiles("templates/views/register_form.html"))
+	tmpl.Execute(w, nil)
+}

@@ -20,19 +20,19 @@ func dbTest() {
 	defer db.Close()
 	fmt.Println("Success!")
 
-	rows, _ := db.Query("SELECT id, username, password, birthdate FROM users")
+	rows, _ := db.Query("SELECT id, username, password, birthdate, creation_date, lastvisit_date FROM users")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for rows.Next() {
 		u := new(users.User)
-		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate)
+		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate, &u.CreationDate, &u.LastVistDate)
 		if err != nil {
 			log.Fatal(err)
 		}
 		allUsers = append(allUsers, u)
-		fmt.Println(u.Birthdate)
+		fmt.Println(u)
 	}
 	fmt.Println(len(allUsers))
 }
@@ -44,6 +44,7 @@ func main() {
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
+	r.HandleFunc("/register_form", registerHandler)
 
 	// Launches the server:
 	preferredPort := ":8080"
