@@ -49,12 +49,12 @@
 
 <!-- Récupérer le nom du rôle d'un utilisateur -->
 
-SELECT (username, profile_picture, birthdate, isActive, creation_date, lastvisit_date, r.name) FROM users
-JOIN LEFT `roles` as r ON role_id = r.id;
+`SELECT (username, profile_picture, birthdate, isActive, creation_date, lastvisit_date, r.name) FROM users
+JOIN LEFT `roles` as r ON role_id = r.id;`
 
 <!-- Récupérer les informations d'un topic, son premier post et son OP -->
 
-SELECT title, GROUP_CONCAT(DISTINCT tags.name SEPARATOR ";") as "tags", p.content, u.username,
+`SELECT title, GROUP_CONCAT(DISTINCT tags.name SEPARATOR ";") as "tags", p.content, u.username,
 t.creation_date, t.modification_date,
 (SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 1) as "likes",
 (SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 2) as "dislikes"
@@ -64,37 +64,37 @@ JOIN tags ON tag.tag_id = tags.id
 JOIN topic_first_posts AS fp ON t.id = fp.topic_id
 JOIN posts AS p ON fp.post_id = p.id
 LEFT JOIN users as u ON t.user_id = u.id
-WHERE t.id = 1;
+WHERE t.id = 1;`
 
 <!-- Récupérer l'ID du premier post depuis un topic pour l'exclure des réponses, récupère les réponses et les -->
 <!-- ordonne par total de (likes - dislikes) ou date de post -->
 
-SELECT post_id INTO @firstPostID FROM topic_first_posts where topic_id = 1;
+`SELECT post_id INTO @firstPostID FROM topic_first_posts where topic_id = 1;`
 
-DROP TABLE IF EXISTS temp;
+`DROP TABLE IF EXISTS temp;
 CREATE TEMPORARY TABLE temp SELECT p.content, u.username, p.creation_date, p.modification_date,
 (SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 1) as "likes",
 (SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 2) as "dislikes"
 FROM posts AS p
 LEFT JOIN users AS u ON p.user_id = u.id
-WHERE p.topic_id = 1 AND p.id != @firstPostID;
+WHERE p.topic_id = 1 AND p.id != @firstPostID;`
 
-SELECT _ FROM temp ORDER BY (likes - dislikes) DESC;
-SELECT _ FROM temp ORDER BY creation_date ASC;
+`SELECT _ FROM temp ORDER BY (likes - dislikes) DESC;
+SELECT _ FROM temp ORDER BY creation_date ASC;`
 
 <!-- Créer un topic et son premier post -->
 
 `INSERT INTO topics (subcategory_id, user_id, title) VALUES
 (1, 4, "Why is datetime format so painful in JS");
-SELECT @topicID := LAST_INSERT_ID();
+SELECT @topicID := LAST_INSERT_ID();`
 
-INSERT INTO topic_tags (topic_id, tag_id) VALUES (@topicID, 1);
+`INSERT INTO topic_tags (topic_id, tag_id) VALUES (@topicID, 1);`
 
-INSERT INTO posts (topic_id, user_id, content) VALUES
+`INSERT INTO posts (topic_id, user_id, content) VALUES
 (@topicID, 4, "This is so bullshit please help me (this is an almost auto-generated post).");
-SELECT @postID := LAST_INSERT_ID();
+SELECT @postID := LAST_INSERT_ID();`
 
-INSERT INTO topic_first_posts(topic_id, post_id) VALUES (@topicID, @post_ID);
+`INSERT INTO topic_first_posts(topic_id, post_id) VALUES (@topicID, @post_ID);`
 
 <!-- Afficher tous les topics d'une sous-categorie -->
 
