@@ -119,3 +119,15 @@ INSERT INTO topic_first_posts(topic_id, post_id) VALUES (@topicID, @post_ID);
 <!-- Suppression d'un post -->
 
 `DELETE FROM posts WHERE id = [post_id];`
+
+-- GET GENERAL DATA : Users, Categories, subcategories, topics, answers, reactions
+
+SELECT COUNT(_) AS "categories",
+(SELECT COUNT(_) FROM subcategories) as "subcategories",
+(SELECT COUNT(_) FROM users) as "users",
+(SELECT COUNT(_) FROM topics) as "topics",
+(SELECT COUNT(_) FROM posts as p
+LEFT JOIN topic_first_posts as tfp ON p.topic_id = tfp.topic_id
+WHERE p.id != tfp.post_id) as "answers",
+(SELECT COUNT(_) FROM post_reactions) as "reactions"
+FROM categories;

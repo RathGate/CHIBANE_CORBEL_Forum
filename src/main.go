@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"forum/packages/users"
+	"forum/packages/structs"
 	"log"
 	"net/http"
 
@@ -12,7 +12,7 @@ import (
 )
 
 func dbTest() {
-	var allUsers []*users.User
+	var allUsers []*structs.User
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		panic(err.Error())
@@ -20,19 +20,18 @@ func dbTest() {
 	defer db.Close()
 	fmt.Println("Success!")
 
-	rows, _ := db.Query("SELECT id, username, password, birthdate FROM users")
+	rows, _ := db.Query("SELECT id, username, password, creation_date FROM users")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for rows.Next() {
-		u := new(users.User)
-		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate)
+		u := new(structs.User)
+		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.CreationDate)
 		if err != nil {
 			log.Fatal(err)
 		}
 		allUsers = append(allUsers, u)
-		fmt.Println(u.Birthdate)
 	}
 	fmt.Println(len(allUsers))
 }
