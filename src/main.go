@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"forum/packages/users"
 	"log"
 	"net/http"
 
@@ -11,33 +12,32 @@ import (
 )
 
 func dbTest() {
-	var (
-		id       int
-		username string
-	)
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/Forum")
+	var allUsers []*users.User
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
 	fmt.Println("Success!")
 
-	result, _ := db.Query("SELECT id, username FROM users")
+	rows, _ := db.Query("SELECT id, username, password, birthdate FROM users")
 	if err != nil {
 		panic(err.Error())
 	}
 
-	for result.Next() {
-		err := result.Scan(&id, &username)
+	for rows.Next() {
+		u := new(users.User)
+		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate)
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(id, username)
+		allUsers = append(allUsers, u)
+		fmt.Println(u.Birthdate)
 	}
+	fmt.Println(len(allUsers))
 }
 func main() {
 	dbTest()
-
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
