@@ -43,8 +43,10 @@ func main() {
 
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/register", registerHandler)
+	r.HandleFunc("/success", successHandler)
+	r.HandleFunc("/error", errorHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
-	r.HandleFunc("/register_form", registerHandler)
 
 	// Launches the server:
 	preferredPort := ":8080"

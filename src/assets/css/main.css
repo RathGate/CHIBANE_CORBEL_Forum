@@ -3,7 +3,7 @@
 }
 :root {
     --color-bg: #F6F6F2;
-    --color-fg: #388087;
+    --color-fg: #5d36e8;
 }
 html, body {
     height: 100vh;
@@ -13,12 +13,64 @@ html, body {
     color: var(--color-fg);
     font-family: "Noto Sans", sans-serif;
 }
+.register-ctn {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
 
-.container {
+.register-ctn.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.register-ctn .register-form {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
     width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+}
+
+.register-btn {
+    margin: 20px;
+    padding: 10px 20px;
+    width: fit-content;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(to right, #5d36e8, #b369ff);
+    color: var(--color-bg);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn {
+    align-self: flex-end;
+    margin-bottom: 16px;
+    font-weight: bold;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.close-btn img {
+    width: 32px;
+    height: 32px;
 }
