@@ -1,23 +1,23 @@
 {{define "register"}}
 <div class="register-ctn" style="display: none">
     <!-- REGISTER FORM -->
-    <form action="/register" method="POST" class="register-form" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <form action="/register" method="POST" class="register-form" enctype="multipart/form-data">
         <!-- USERNAME -->
         <div class="close-btn"><img src="assets/img/close.png"></div>
         <div>
             <label for="username">Choose a username:</label>
-            <input type="text" id="username" name="username" required maxlength="15">
+            <input type="text" id="username" name="username" required maxlength="20">
         </div>
         <!-- PASSWORD -->
         <div>
             <label for="password">Choose a password:</label>
-            <input type="password" id="password" name="password" required maxlength="255" onchange="return passwordValidation()">
+            <input type="password" id="password" name="password" required maxlength="255" oninput="return passwordValidation()">
             <div id="passwordError" class="error"></div>
         </div>
         <!-- EMAIL -->
         <div>
             <label for="email">Email address:</label>
-            <input type="email" id="email" name="email" required maxlength="255" onchange="return emailValidation()">
+            <input type="email" id="email" name="email" required maxlength="255" oninput="return emailValidation()">
             <div id="emailError" class="error"></div>
         </div>
         <!-- BIRTHDATE
