@@ -1,7 +1,7 @@
 {{define "register"}}
 <div class="register-ctn" style="display: none">
     <!-- REGISTER FORM -->
-    <form action="/register" method="POST" class="register-form" enctype="multipart/form-data">
+    <form action="/register" method="POST" class="register-form" enctype="multipart/form-data" onsubmit="return validateForm()">
         <!-- USERNAME -->
         <div class="close-btn"><img src="assets/img/close.png"></div>
         <div>
@@ -11,18 +11,20 @@
         <!-- PASSWORD -->
         <div>
             <label for="password">Choose a password:</label>
-            <input type="password" id="password" name="password" required maxlength="255">
+            <input type="password" id="password" name="password" required maxlength="255" onchange="return passwordValidation()">
+            <div id="passwordError" class="error"></div>
         </div>
         <!-- EMAIL -->
         <div>
             <label for="email">Email address:</label>
-            <input type="email" id="email" name="email" required maxlength="255">
+            <input type="email" id="email" name="email" required maxlength="255" onchange="return emailValidation()">
+            <div id="emailError" class="error"></div>
         </div>
-        <!-- BIRTHDATE -->
+        <!-- BIRTHDATE
         <div>
             <label for="birthdate">Birthdate:</label>
             <input type="date" id="birthdate" name="birthdate" required>
-        </div>
+        </div>-->
         <!-- PROFILE PICTURE -->
         <div>
             <label for="profile_picture">Choose a profile picture:</label>

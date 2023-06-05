@@ -44,6 +44,8 @@ func main() {
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
 	r.HandleFunc("/register", registerHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/profile", profileHandler)
 	r.HandleFunc("/success", successHandler)
 	r.HandleFunc("/error", errorHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
