@@ -4,33 +4,34 @@
     <form action="/register" method="POST" class="register-form" enctype="multipart/form-data">
         <!-- USERNAME -->
         <div class="close-btn"><img src="assets/img/close.png"></div>
-        <div>
+        <div class="input-field">
             <label for="username">Choose a username:</label>
-            <input type="text" id="username" name="username" required maxlength="20">
+            <input type="text" id="username" name="username" required maxlength="20" oninput="return usernameValidation()">
+            <div id="usernameError" class="error"></div>
         </div>
         <!-- PASSWORD -->
-        <div>
+        <div class="input-field">
             <label for="password">Choose a password:</label>
             <input type="password" id="password" name="password" required maxlength="255" oninput="return passwordValidation()">
             <div id="passwordError" class="error"></div>
         </div>
         <!-- EMAIL -->
-        <div>
+        <div class="input-field">
             <label for="email">Email address:</label>
             <input type="email" id="email" name="email" required maxlength="255" oninput="return emailValidation()">
             <div id="emailError" class="error"></div>
         </div>
         <!-- BIRTHDATE
-        <div>
+        <div class="input-field">
             <label for="birthdate">Birthdate:</label>
             <input type="date" id="birthdate" name="birthdate" required>
         </div>-->
-        <!-- PROFILE PICTURE -->
+        <!-- PROFILE PICTURE-->
         <div>
             <label for="profile_picture">Choose a profile picture:</label>
             <input type="file" id="profile_picture" name="profile_picture">
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" class="creds-btn">Register</button>
     </form>
 </div>
 {{end}}

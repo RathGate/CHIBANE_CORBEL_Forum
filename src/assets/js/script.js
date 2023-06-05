@@ -1,100 +1,104 @@
-function toggleForm(formClass) {
+const toggleForm = (formClass) => {
     const formCtn = document.querySelector(formClass);
     formCtn.style.display = 'flex';
-    setTimeout(function() {
+    setTimeout(() => {
         formCtn.classList.add('show');
     }, 0);
 
     const otherFormClass = formClass === '.register-ctn' ? '.login-ctn' : '.register-ctn';
     const otherFormCtn = document.querySelector(otherFormClass);
     otherFormCtn.classList.remove('show');
-    setTimeout(function() {
+    setTimeout(() => {
         otherFormCtn.style.display = 'none';
     }, 300);
-}
+};
 
-document.querySelector('.creds-btn.register').addEventListener('click', function() {
-    toggleForm('.register-ctn');
+const handleToggle = (buttonClass, formClass) => {
+    document.querySelector(buttonClass).addEventListener('click', (event) => {
+        event.stopPropagation();
+        toggleForm(formClass);
+    });
+};
+
+const handleClose = (closeBtnClass, formClass) => {
+    const closeBtn = document.querySelector(closeBtnClass);
+    closeBtn.addEventListener('click', () => {
+        const formCtn = document.querySelector(formClass);
+        formCtn.classList.remove('show');
+        setTimeout(() => (formCtn.style.display = 'none'), 300);
+    });
+};
+
+const handleOutsideClick = (formCtns) => {
+    document.addEventListener('click', (event) => {
+        const registerForm = document.querySelector('.register-form');
+        const loginForm = document.querySelector('.login-form');
+
+        if (!registerForm.contains(event.target) && !loginForm.contains(event.target)) {
+            formCtns.forEach((formCtn) => {
+                formCtn.classList.remove('show');
+                setTimeout(() => (formCtn.style.display = 'none'), 300);
+            });
+        }
+    });
+};
+
+const validateField = (value, regex, errorMessage, errorElem) => {
+    const isValid = regex.test(value);
+    errorElem.textContent = isValid ? '' : errorMessage;
+    errorElem.style.display = isValid ? 'none' : 'flex';
+    return isValid;
+};
+
+const validateInput = (inputId, regex, errorMessage, errorElemId) => {
+    const input = document.getElementById(inputId);
+    const errorElem = document.getElementById(errorElemId);
+
+    const validate = () => validateField(input.value, regex, errorMessage, errorElem);
+
+    input.addEventListener('input', validate);
+    return validate;
+};
+
+const toggleFormClass = (event) => {
+    const formClass = event.target.classList.contains('register') ? '.register-ctn' : '.login-ctn';
+    toggleForm(formClass);
+};
+
+document.querySelectorAll('.creds-btn.register, .creds-btn.login').forEach((button) => {
+    button.addEventListener('click', toggleFormClass);
 });
 
-document.querySelector('.creds-btn.login').addEventListener('click', function() {
-    toggleForm('.login-ctn');
-});
+handleToggle('.creds-btn.register', '.register-ctn');
+handleToggle('.creds-btn.login', '.login-ctn');
 
-const closeBtnRegister = document.querySelector('.register-ctn .close-btn');
-closeBtnRegister.addEventListener('click', function() {
-    const registerCtn = document.querySelector('.register-ctn');
-    registerCtn.classList.remove('show');
-    setTimeout(function() {
-        registerCtn.style.display = 'none';
-    }, 300);
-});
+handleClose('.register-ctn .close-btn', '.register-ctn');
+handleClose('.login-ctn .close-btn', '.login-ctn');
 
-const closeBtnLogin = document.querySelector('.login-ctn .close-btn');
-closeBtnLogin.addEventListener('click', function() {
-    const loginCtn = document.querySelector('.login-ctn');
-    loginCtn.classList.remove('show');
-    setTimeout(function() {
-        loginCtn.style.display = 'none';
-    }, 300);
-});
+const formCtns = document.querySelectorAll('.register-ctn, .login-ctn');
+handleOutsideClick(formCtns);
 
-/*function validateUsername(username) {
-    const usernameRegex = /^(?=.*[a-zA-Z])[a-z0-9_-]{3,20}$/;
-    if (!usernameRegex.test(username)) {
-        return "Your username is not valid. Only characters A-Z, a-z, 0-9 and '-' are valid, and must contain at least";
-    }
+const usernameValidation = validateInput(
+    'username',
+    /^(?=.*[a-zA-Z])[a-zA-Z0-9_-]{3,20}$/,
+    "Username is not valid. Only characters A-Z, a-z, 0-9, and '_' are allowed, and must be 3-20 characters long.",
+    'usernameError'
+);
 
-    return "";
-}*/
-function validatePassword(password) {
-    if (password.length < 8) {
-        return "Password must be at least 8 characters long";
-    }
+const passwordValidation = validateInput(
+    'password',
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character',
+    'passwordError'
+);
 
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-        return "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character";
-    }
+const emailValidation = validateInput(
+    'email',
+    /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+    'Invalid email address',
+    'emailError'
+);
 
-    return "";
-}
-
-function validateEmail(email) {
-    const emailRegex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-    if (!emailRegex.test(email)) {
-        return "Invalid email address";
-    }
-
-    return "";
-}
-
-function passwordValidation() {
-    const password = document.getElementById("password").value;
-    const passwordError = validatePassword(password);
-    const passwordErrorElem = document.getElementById("passwordError");
-
-    if (passwordError) {
-        passwordErrorElem.textContent = passwordError;
-        passwordErrorElem.style.display = "flex";
-        return false;
-    }
-
-    passwordErrorElem.style.display = "none";
-    return true;
-}
-
-function emailValidation() {
-    const email = document.getElementById("email").value;
-    const emailError = validateEmail(email);
-    const emailErrorElem = document.getElementById("emailError");
-
-    if (emailError) {
-        emailErrorElem.textContent = emailError;
-        emailErrorElem.style.display = "flex";
-        return false;
-    }
-
-    emailErrorElem.style.display = "none";
-    return true;
-}
+const validateForm = () => {
+    return usernameValidation() && passwordValidation() && emailValidation();
+};

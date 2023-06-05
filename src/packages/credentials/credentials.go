@@ -4,34 +4,41 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/packages/users"
+	"github.com/asaskevich/govalidator"
+	"regexp"
 	"unicode"
 )
 
-func ContainsLetter(password string) bool {
+func ContainsAny(password string, f func(rune) bool) bool {
 	for _, char := range password {
-		if unicode.IsLetter(char) {
+		if f(char) {
 			return true
 		}
 	}
 	return false
+}
+
+func ContainsLetter(password string) bool {
+	return ContainsAny(password, unicode.IsLetter)
 }
 
 func ContainsDigit(password string) bool {
-	for _, char := range password {
-		if unicode.IsDigit(char) {
-			return true
-		}
-	}
-	return false
+	return ContainsAny(password, unicode.IsDigit)
 }
 
 func ContainsSpecialChar(password string) bool {
-	for _, char := range password {
-		if !unicode.IsLetter(char) && !unicode.IsDigit(char) {
-			return true
-		}
-	}
-	return false
+	return ContainsAny(password, func(char rune) bool {
+		return !unicode.IsLetter(char) && !unicode.IsDigit(char)
+	})
+}
+
+func IsValidEmail(email string) bool {
+	return govalidator.IsEmail(email)
+}
+
+func IsValidUsername(username string) bool {
+	regex := regexp.MustCompile(`^(?=.*[a-zA-Z])[a-zA-Z0-9_-]{3,20}$`)
+	return regex.MatchString(username)
 }
 
 func ValidateUser(username, password string) (*users.User, error) {
