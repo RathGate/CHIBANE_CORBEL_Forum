@@ -25,7 +25,12 @@ const handleClose = (closeBtnClass, formClass) => {
     closeBtn.addEventListener('click', () => {
         const formCtn = document.querySelector(formClass);
         formCtn.classList.remove('show');
-        setTimeout(() => (formCtn.style.display = 'none'), 300);
+        formCtn.style.display = 'none';
+        const errorElements = document.querySelectorAll('.error');
+        errorElements.forEach((error) => {
+            error.innerHTML = '';
+        }
+        );
     });
 };
 
@@ -37,11 +42,19 @@ const handleOutsideClick = (formCtns) => {
         if (!registerForm.contains(event.target) && !loginForm.contains(event.target)) {
             formCtns.forEach((formCtn) => {
                 formCtn.classList.remove('show');
-                setTimeout(() => (formCtn.style.display = 'none'), 300);
+                setTimeout(() => {
+                    formCtn.style.display = 'none';
+                    const errorElements = document.querySelectorAll('.error');
+                    errorElements.forEach((error) => {
+                        error.innerHTML = '';
+                    });
+                }, 300);
             });
         }
     });
 };
+
+
 
 const validateField = (value, regex, errorMessage, errorElem) => {
     const isValid = regex.test(value);

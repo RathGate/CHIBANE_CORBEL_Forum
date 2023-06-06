@@ -56,16 +56,16 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		file, _, err := r.FormFile("profile_picture")
-		if err != nil && err != http.ErrMissingFile {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer func() {
-			if file != nil {
-				file.Close()
-			}
-		}()
+		//file, _, err := r.FormFile("profile_picture")
+		//if err != nil && err != http.ErrMissingFile {
+		//	http.Error(w, err.Error(), http.StatusInternalServerError)
+		//	return
+		//}
+		//defer func() {
+		//	if file != nil {
+		//		file.Close()
+		//	}
+		//}()
 
 		/*	dateofbirth, err := time.Parse("2006-01-02", birthdate)
 			if err != nil {
@@ -81,11 +81,11 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 
 		var stmt *sql.Stmt
-		if file != nil {
-			stmt, err = db.Prepare("INSERT INTO users (username, password, email, profile_picture, /*birthdate,*/ role_id, isActive) VALUES (?, ?, ?, ?, /*?,*/ ?, ?)")
-		} else {
-			stmt, err = db.Prepare("INSERT INTO users (username, password, email, /*birthdate,*/ role_id, isActive) VALUES (?, ?, ?, /*?,*/ ?, ?)")
-		}
+		//if file != nil {
+		//	stmt, err = db.Prepare("INSERT INTO users (username, password, email, profile_picture, /*birthdate,*/ role_id, isActive) VALUES (?, ?, ?, ?, /*?,*/ ?, ?)")
+		//} else {
+		stmt, err = db.Prepare("INSERT INTO users (username, password, email, /*birthdate,*/ role_id, isActive) VALUES (?, ?, ?, /*?,*/ ?, ?)")
+		//}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -93,11 +93,11 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		defer stmt.Close()
 
 		var result sql.Result
-		if file != nil {
-			result, err = stmt.Exec(username, password, email, nil /*dateofbirth,*/, 3, 1)
-		} else {
-			result, err = stmt.Exec(username, password, email /*dateofbirth,*/, 3, 1)
-		}
+		//if file != nil {
+		//	result, err = stmt.Exec(username, password, email, nil /*dateofbirth,*/, 3, 1)
+		//} else {
+		result, err = stmt.Exec(username, password, email /*dateofbirth,*/, 3, 1)
+		//}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
