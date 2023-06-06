@@ -20,21 +20,23 @@ func dbTest() {
 	defer db.Close()
 	fmt.Println("Success!")
 
-	rows, _ := db.Query("SELECT id, username, password, creation_date FROM users")
+	rows, _ := db.Query("SELECT id, username, password, birthdate, creation_date, lastvisit_date FROM users")
 	if err != nil {
 		panic(err.Error())
 	}
 
 	for rows.Next() {
 		u := new(structs.User)
-		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.CreationDate)
+		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate, &u.CreationDate, &u.LastVistDate)
 		if err != nil {
 			log.Fatal(err)
 		}
 		allUsers = append(allUsers, u)
+		fmt.Println(u)
 	}
 	fmt.Println(len(allUsers))
 }
+
 func main() {
 	dbTest()
 	r := mux.NewRouter()
@@ -42,6 +44,11 @@ func main() {
 
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/register", registerHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/profile", profileHandler)
+	r.HandleFunc("/success", successHandler)
+	r.HandleFunc("/error", errorHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:
