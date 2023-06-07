@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/packages/credentials"
+	"forum/packages/structs"
 	"html/template"
 	"net/http"
 )
@@ -21,11 +22,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.New("index.html")
 
 	// Parse the templates
-	tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/register_form.html", "templates/components/login_form.html"))
+	tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html"))
 
 	// Execute the template
 	tmpl.ExecuteTemplate(w, "index.html", nil)
 }
+
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
@@ -163,4 +165,29 @@ func successHandler(w http.ResponseWriter, r *http.Request) {
 func errorHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := template.Must(template.ParseFiles("templates/results/error.html"))
 	tmpl.Execute(w, nil)
+}
+
+func catHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	categories, err := dbGetCategories()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	data := struct {
+		ID         string
+		Name       string
+		Categories []structs.Category
+	}{
+		ID:         id,
+		Name:       name,
+		Categories: categories,
+	}
+
+	tmpl := template.Must(template.New("categories").ParseFiles("templates/components/cat_navigation.html"))
+	err = tmpl.ExecuteTemplate(w, "categories", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

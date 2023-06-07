@@ -21,3 +21,8 @@ type User struct {
 	CreationDate   time.Time    `json:"creation_date"`
 	LastVistDate   sql.NullTime `json:"lastvisit_date"`
 }
+
+type Category struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
