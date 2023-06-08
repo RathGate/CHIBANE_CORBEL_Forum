@@ -95,3 +95,11 @@ nav {
     background-color: hsl(0, 0%, 85%);
 }
 
+.c-b-nav {
+    transition: all 0.3s ease;
+}
+
+.c-b-nav:hover {
+    background: linear-gradient(to right, #6d46fa, #b673fc);
+    transition: all 0.3s ease;
+}
