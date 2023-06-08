@@ -1,0 +1,26 @@
+.pagination-bar {
+    display: flex;
+    margin: 0 auto;
+    height: 25px;
+}
+.pages-ctn {
+    display: flex;
+    height: 100%;
+}
+.page-item {
+    height: 100%;
+    min-width: 25px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidd;
+}
+.page-btn {
+    opacity: .5;
+    transition: .15s ease;
+}
+.page-btn.active {
+    opacity: 1;
+    cursor: pointer;
+}

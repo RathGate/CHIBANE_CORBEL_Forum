@@ -4,18 +4,29 @@ import (
 	"database/sql"
 	"fmt"
 	"forum/packages/credentials"
-	"forum/packages/structs"
+	"forum/packages/dbData"
 	"html/template"
+	"log"
 	"net/http"
 )
 
-/* notFoundHandler handles the 404 page */
+func generateTemplate(templateName string, filepaths []string) *template.Template {
+	tmpl, err := template.New(templateName).Funcs(template.FuncMap{
+		"getTimeSincePosted": dbData.GetTimeSincePosted,
+	}).ParseFiles(filepaths...)
+	// Error check:
+	if err != nil {
+		log.Fatal(err)
+	}
+	return tmpl
+}
+
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
+	// *Generates and executes templates:
+	tmpl := generateTemplate("index.html", []string{"templates/views/index.html"})
+	tmpl.Execute(w, userData)
 
-	// Generates and executes templates:
-	tmpl := template.Must(template.ParseFiles("templates/views/index.html"))
-	tmpl.Execute(w, nil)
 }
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
@@ -27,7 +38,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := struct {
-		Categories []structs.Category
+		Categories []dbData.Category
 	}{
 		Categories: categories,
 	}
@@ -116,6 +127,27 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+func topicsHandler(w http.ResponseWriter, r *http.Request) {
+	filters := dbData.RetrieveFilters(r)
+	temp, err := dbData.GetTopics(filters)
+	if err != nil {
+		fmt.Println("Error in handlers.go")
+		log.Fatal(err)
+	}
+	userData.Topics = temp.Topics
+	userData.Filters = temp.Filters
+
+	if r.Method == "POST" {
+		r.ParseForm()
+		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html"})
+		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
+		return
+	}
+
+	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html"})
+	tmpl.Execute(w, userData)
+}
+
 /* loginHandler handles the login form and redirects to the profile page */
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
@@ -178,7 +210,7 @@ func catHandler(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		ID         string
 		Name       string
-		Categories []structs.Category
+		Categories []dbData.Category
 	}{
 		ID:         id,
 		Name:       name,

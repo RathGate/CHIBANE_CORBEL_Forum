@@ -1,4 +1,4 @@
-package structs
+package dbData
 
 import (
 	"database/sql"
@@ -25,4 +25,8 @@ type User struct {
 type Category struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
+}
+type Tag struct {
+	Name  string
+	Color string
 }

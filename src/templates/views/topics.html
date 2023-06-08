@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/assets/css/main.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Forum!</title>
+    </head>
+
+    <body>
+        {{ template "navbar"}}
+        <main>
+            <section class="topics">
+                <div class="filters-ctn"><select name="order-by" id="order-by">
+                        <option value="score">Score</option>
+                        <option value="newest" selected>Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                    </select>
+                    <select name="date" id="date">
+                        <option value="1">Last 24h</option>
+                        <option value="7" selected>Last 7 days</option>
+                        <option value="15">Last 15 days</option>
+                        <option value="30">Last 30 days</option>
+                        <option value="-1">All time</option>
+                    </select>
+                </div>
+                <div id="test">
+                {{ template "topics-ctn" . }}
+                </div>
+            </section>
+        </main>
+        <script src="/assets/js/script.js"></script>
+    </body>
+</html>

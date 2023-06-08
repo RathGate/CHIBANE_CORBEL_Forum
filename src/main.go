@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"forum/packages/structs"
+	"forum/packages/dbData"
 	"log"
 	"net/http"
 
@@ -37,7 +37,7 @@ import (
 //	fmt.Println(len(allUsers))
 //}
 
-func dbGetCategories() ([]structs.Category, error) {
+func dbGetCategories() ([]dbData.Category, error) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		return nil, err
@@ -50,9 +50,9 @@ func dbGetCategories() ([]structs.Category, error) {
 	}
 	defer rows.Close()
 
-	var categories []structs.Category
+	var categories []dbData.Category
 	for rows.Next() {
-		var category structs.Category
+		var category dbData.Category
 		err := rows.Scan(&category.ID, &category.Name)
 		if err != nil {
 			return nil, err
@@ -67,9 +67,9 @@ func dbGetCategories() ([]structs.Category, error) {
 	return categories, nil
 }
 
+var userData dbData.Data
+
 func main() {
-	//dbGetUsers()
-	//dbGetCategories()
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
@@ -77,10 +77,11 @@ func main() {
 	r.HandleFunc("/", indexHandler)
 	r.HandleFunc("/categories", catHandler)
 	r.HandleFunc("/register", registerHandler)
-	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/profile", profileHandler)
 	r.HandleFunc("/success", successHandler)
 	r.HandleFunc("/error", errorHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/topics", topicsHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:
