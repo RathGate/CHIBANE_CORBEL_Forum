@@ -11,11 +11,15 @@
     <title>Forum!</title>
 </head>
 <body>
-{{template "categories"}}
-<div class="creds-btn register">Register</div>
+
+{{template "navbar"}}
+
 {{template "register"}}
-<div class="creds-btn login">Log in</div>
+
 {{template "login"}}
+
+
+{{template "categories" .}}
 
 
     <script src="/assets/js/script.js"></script>

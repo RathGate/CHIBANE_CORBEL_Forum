@@ -1,4 +1,6 @@
 @import url(cat_nav.css);
+@import url(forms.css);
+@import url(nav_bar.css);
 
 * {
     box-sizing: border-box;
@@ -16,110 +18,9 @@ html, body {
     height: 100vh;
     width: 100%;
     margin: 0;
-    background: var(--color-bg);
-    color: var(--color-fg);
-    font-family: "Noto Sans", sans-serif;
-}
-.register-ctn, .login-ctn {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.register-ctn.show, .login-ctn.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.register-ctn .register-form, .login-ctn .login-form  {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 64px;
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    border-radius: 5px;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    z-index: 500;
-}
-
-.creds-btn {
-    margin: 20px;
-    padding: 10px 20px;
-    width: fit-content;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(to right, #5d36e8, #b369ff);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: linear-gradient(to right, #11192a, #26254f);
     color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.close-btn {
-    align-self: flex-end;
-    margin-bottom: 16px;
-    font-weight: bold;
-    color: var(--color-fg);
-    cursor: pointer;
-}
-
-.close-btn img {
-    width: 32px;
-    height: 32px;
-}
-
-
-.input-field {
-    position: relative;
-}
-
-.input-field label {
-    position: absolute;
-    top: -20px;
-    left: 0;
-    margin-bottom: 4px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.input-field input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.3s ease;
-
-}
-
-.input-field input:focus {
-    border-color: var(--color-fg);
-    border-width: 2px;
-}
-
-.error {
-    position: absolute;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    font-size: 12px;
-    color: red;
-    max-width: 300px;
-    overflow-wrap: break-word;
+    font-family: "Noto Sans", sans-serif;
 }
