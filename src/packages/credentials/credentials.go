@@ -3,10 +3,11 @@ package credentials
 import (
 	"database/sql"
 	"fmt"
-	"forum/packages/structs"
-	"github.com/asaskevich/govalidator"
+	"forum/packages/dbData"
 	"regexp"
 	"unicode"
+
+	"github.com/asaskevich/govalidator"
 )
 
 func ContainsAny(password string, f func(rune) bool) bool {
@@ -41,14 +42,14 @@ func IsValidUsername(username string) bool {
 	return regex.MatchString(username)
 }
 
-func ValidateUser(username, password string) (*structs.User, error) {
+func ValidateUser(username, password string) (*dbData.User, error) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	var user structs.User
+	var user dbData.User
 	err = db.QueryRow("SELECT id, username, password FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {

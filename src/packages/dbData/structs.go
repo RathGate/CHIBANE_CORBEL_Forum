@@ -1,4 +1,4 @@
-package structs
+package dbData
 
 import (
 	"database/sql"
@@ -20,4 +20,13 @@ type User struct {
 	Birthdate      sql.NullTime `json:"birthdate"`
 	CreationDate   time.Time    `json:"creation_date"`
 	LastVistDate   sql.NullTime `json:"lastvisit_date"`
+}
+
+type Category struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+type Tag struct {
+	Name  string
+	Color string
 }

@@ -8,14 +8,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Forum!</title>
 </head>
 <body>
-<div class="creds-btn register">Register</div>
+
+{{template "navbar"}}
+
 {{template "register"}}
-<div class="creds-btn login">Log in</div>
+
 {{template "login"}}
 
+
+{{template "categories" .}}
 
     <script src="/assets/js/script.js"></script>
 </body>

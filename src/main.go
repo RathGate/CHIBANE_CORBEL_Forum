@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"forum/packages/structs"
+	"forum/packages/dbData"
 	"log"
 	"net/http"
 
@@ -11,44 +11,77 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func dbTest() {
-	var allUsers []*structs.User
+//func dbGetUsers() {
+//	var allUsers []*structs.User
+//	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//	defer db.Close()
+//	fmt.Println("Success!")
+//
+//	rows, _ := db.Query("SELECT id, username, password, birthdate, creation_date, lastvisit_date FROM users")
+//	if err != nil {
+//		panic(err.Error())
+//	}
+//
+//	for rows.Next() {
+//		u := new(structs.User)
+//		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate, &u.CreationDate, &u.LastVistDate)
+//		if err != nil {
+//			log.Fatal(err)
+//		}
+//		allUsers = append(allUsers, u)
+//		fmt.Println(u)
+//	}
+//	fmt.Println(len(allUsers))
+//}
+
+func dbGetCategories() ([]dbData.Category, error) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	defer db.Close()
-	fmt.Println("Success!")
 
-	rows, _ := db.Query("SELECT id, username, password, birthdate, creation_date, lastvisit_date FROM users")
+	rows, err := db.Query("SELECT id, name FROM categories")
 	if err != nil {
-		panic(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []dbData.Category
+	for rows.Next() {
+		var category dbData.Category
+		err := rows.Scan(&category.ID, &category.Name)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, category)
 	}
 
-	for rows.Next() {
-		u := new(structs.User)
-		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate, &u.CreationDate, &u.LastVistDate)
-		if err != nil {
-			log.Fatal(err)
-		}
-		allUsers = append(allUsers, u)
-		fmt.Println(u)
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
-	fmt.Println(len(allUsers))
+
+	return categories, nil
 }
 
+var userData dbData.Data
+
 func main() {
-	dbTest()
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
+	r.HandleFunc("/categories", catHandler)
 	r.HandleFunc("/register", registerHandler)
-	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/profile", profileHandler)
 	r.HandleFunc("/success", successHandler)
 	r.HandleFunc("/error", errorHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/topics", topicsHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:

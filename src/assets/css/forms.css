@@ -1,0 +1,117 @@
+/* Registration and login containers */
+.register-ctn,
+.login-ctn {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Animation for registration and login containers */
+.register-ctn.show,
+.login-ctn.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Registration and login forms */
+.register-ctn .register-form,
+.login-ctn .login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 64px;
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.75);
+    border: solid rgba(34, 50, 82, 0.75) 1px;
+    border-radius: 16px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 500;
+}
+
+/* Buttons related to the forms */
+.creds-btn {
+    margin: 20px;
+    padding: 8px 16px;
+    width: fit-content;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(to right, #5d36e8, #b369ff);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.close-btn {
+    align-self: flex-end;
+    margin-bottom: 16px;
+    font-weight: bold;
+    color: var(--color-fg);
+    cursor: pointer;
+}
+
+.close-btn img {
+    width: 32px;
+    height: 32px;
+}
+
+/* Input fields */
+.input-field {
+    position: relative;
+}
+
+.input-field label {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    border-bottom: solid var(--color-fg) 1px;
+    background: transparent;
+    outline: none;
+    transition: border-color 0.3s ease;
+    color: white;
+}
+
+.input-field input:focus {
+    border-color: var(--color-fg);
+    border-width: 2px;
+}
+
+/* Error messages */
+.error {
+    position: absolute;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    color: red;
+    max-width: 300px;
+    overflow-wrap: break-word;
+}

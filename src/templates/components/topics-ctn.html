@@ -1,0 +1,50 @@
+{{ define "topics-ctn" }}
+    <div class="topics-container">
+        {{ range .Topics }}
+        <div class="topic-item">
+            <div class="ti-score 
+                        {{ if gt .Score 0}}positive
+                        {{ else if lt .Score 0}}negative{{end}}
+                        {{ if .CurrentUserReaction.Valid}}voted{{end}}">
+                <i class="fa-solid fa-arrow-up"></i>
+                <span>{{ .Score }}</span>
+                <i class="fa-solid fa-arrow-down"></i>
+            </div>
+            <div class="ti-content">
+                <div class="ti-title">{{.Title}}</div>
+                <div class="ti-tag-container">
+                    <div class="ti-tag-item category">{{.Category}}</div>
+                    {{ range .Tags }}
+                    <div class="ti-tag-item">{{ . }}</div>
+                    {{ end }}
+                </div>
+                <div class="ti-body">{{.Content}}</div>
+                <div class="ti-footer">
+                    <div class="left">
+                        <div class="ti-profile">
+                            {{ if .Username.Valid }}
+                            <div class="pfp"><img src="https://picsum.photos/seed/{{.Username.String}}/200"
+                                    alt="User profile picture"></div>
+                            <div class="username"><span class="faded">Posted by </span></span><a
+                                    class="bold">{{.Username.String}}</a></div>
+                            {{ else }}
+                            <div class="pfp unknown"></div>
+                            <div class="username faded">Posted by <span class="bold">deleted user</span></div>
+                            {{ end }}
+                        </div>
+                        <div class="ti-time faded">{{ getTimeSincePosted .}}</div>
+                    </div>
+                    <div class="right">
+                        <div class="answers faded"><i class="fa-regular fa-comments"></i>{{.Answers}}</div>
+                    </div>
+                </div>
+            </div>
+            <div></div>
+        </div>
+        {{ end }}
+    </div>
+    {{ if gt .Filters.CurrentPage 0 }}
+    <div>Current Page: {{.Filters.CurrentPage}} / {{.Filters.Results.PageCount}}</div>
+    <div>Total Results: {{.Filters.Results.ResultCount}}</div>
+    {{ end }}
+{{ end }}
