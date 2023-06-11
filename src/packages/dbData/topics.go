@@ -130,7 +130,6 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 	if data.Filters.CurrentPage < 1 {
 		data.Filters.CurrentPage = 1
 	}
-	fmt.Println(WriteAllTopicsRequest(data.Filters))
 	rows, _ := db.Query(WriteAllTopicsRequest(data.Filters))
 	if err != nil {
 		panic(err.Error())
@@ -153,4 +152,51 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 		data.Topics = append(data.Topics, *tempTopic)
 	}
 	return data, nil
+}
+
+func GetPagesArr(t TopicFilters) []int {
+	currPage := t.CurrentPage
+	totalPages := t.Results.PageCount
+	result := []int{1}
+	// No page or no result somehow
+	if currPage == 0 || totalPages == 0 {
+		return nil
+	}
+	// Number of total pages less or equal to 6
+	if totalPages <= 7 {
+		for i := 2; i <= currPage; i++ {
+			result = append(result, i)
+		}
+		return result
+	} else if currPage <= 5 {
+		for i := 2; i <= 5; i++ {
+			result = append(result, i)
+		}
+		result = append(result, -1)
+	} else if currPage <= totalPages-4 {
+		result = append(result, -1)
+		for i := totalPages - 4; i <= totalPages-1; i++ {
+			result = append(result, i)
+		}
+	} else {
+		result = append(result, -1)
+		for i := currPage - 1; i <= currPage+1; i++ {
+			result = append(result, i)
+		}
+		result = append(result, -1)
+	}
+	result = append(result, totalPages)
+	return result
+}
+
+func GetPagesValues(t TopicFilters) (result [2]int) {
+	if t.Results.ResultCount == 0 {
+		return result
+	}
+	result[0] = 1 + (t.CurrentPage-1)*t.Limit
+	result[1] = result[0] + 9
+	if result[1] > t.Results.ResultCount {
+		result[1] = t.Results.ResultCount
+	}
+	return result
 }

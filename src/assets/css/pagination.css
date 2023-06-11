@@ -1,26 +1,65 @@
-.pagination-bar {
-    display: flex;
-    margin: 0 auto;
-    height: 25px;
-}
-.pages-ctn {
-    display: flex;
-    height: 100%;
-}
-.page-item {
-    height: 100%;
-    min-width: 25px;
-    border-radius: 5px;
+.pagination-bloc {
+    padding: 20px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidd;
+    flex-direction: column;
+    gap: 5px;
 }
-.page-btn {
-    opacity: .5;
-    transition: .15s ease;
+.result-count {
+    align-self: flex-end;
+    font-size: 14px;
+    opacity: .35;
 }
-.page-btn.active {
-    opacity: 1;
+.pages-ctn {
+    height: 20px;
+    display: flex;
+    gap: 5px;
+}
+
+.page-item {
+    cursor: default;
+}
+
+.page-item label {
     cursor: pointer;
+    background-color: rgba(255, 255, 255, .1);
+    border: 1px solid transparent;
+}
+
+.page-item label, .page-item div {
+    height: 100%;
+    padding: 0 10px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+
+}
+.page-item.clickable:hover{
+    border-color: #b369ff;
+}
+
+.page-item.selected {
+    border: 1px solid #b369ff;
+}
+
+input.hidden {
+    display: none;
+    visibility: none;
+    height: 0;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+input[name="page"]:checked ~ label {
+    border-color: #b369ff;
+}
+
+.page-btn.prev, .page-btn.next {
+    font-size: 14px;
+    padding: 0 8px;
 }

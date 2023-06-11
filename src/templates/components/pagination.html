@@ -1,0 +1,25 @@
+{{ define "pagination" }}
+    {{ $pageArr := getPagesArr . }}
+    {{ if gt .Results.ResultCount 0}}
+    <div class="pagination-bloc">
+        <div class="pages-ctn">
+            <div class="page-btn prev"><i class="fa-solid fa-chevron-left"></i></div>
+            {{ range $pageArr }}
+                {{ if eq . -1 }}
+                <div class="page-item">
+                    <div>...</div>
+                </div>
+                {{ else }}
+                <div class="page-item page-btn">
+                    <input id="page-{{ . }}" class="hidden" type="radio" name="page" value="{{ . }}" 
+                    {{ if eq . $.CurrentPage }}checked{{end}}>
+                    <label for="page-{{ . }}">{{ . }}</label>
+                </div>
+                {{ end }}
+            {{ end }}
+            <div class="page-btn next"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+    <div class="result-count">Results: {{ index (getPagesValues .) 0 }} - {{ index (getPagesValues .) 1 }} of {{ .Results.ResultCount }}</div>
+    </div>
+    {{end}}
+{{ end }}

@@ -1,3 +1,9 @@
+.topics.middle {
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+}
+
 .topics-container {
     display: flex;
     flex-direction: column;
@@ -6,7 +12,6 @@
 
 .topic-item {
     width: 100%;
-    max-width: 750px;
     border-radius: 5px;
     background-color: rgba(17, 25, 40, 0.75);
     margin: 0 auto;
