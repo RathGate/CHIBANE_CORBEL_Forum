@@ -17,11 +17,16 @@
         {{ template "navbar"}}
         <main>
             <section class="topics middle">
-                <div class="filters-ctn"><select name="order-by" id="order-by">
-                        <option value="score">Score</option>
-                        <option value="newest" selected>Newest first</option>
-                        <option value="oldest">Oldest first</option>
-                    </select>
+                <div class="filters-ctn">
+                    <div class="select-wrap">
+                        <select name="order-by" id="order-by">
+                            <option value="score">Score</option>
+                            <option value="newest" selected>Newest first</option>
+                            <option value="oldest">Oldest first</option>
+                        </select>
+                        <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="select-wrap">
                     <select name="date" id="date">
                         <option value="1">Last 24h</option>
                         <option value="7" selected>Last 7 days</option>
@@ -29,6 +34,9 @@
                         <option value="30">Last 30 days</option>
                         <option value="-1">All time</option>
                     </select>
+                    <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+
                 </div>
                 <div id="test">
                 {{ template "topics-ctn" . }}

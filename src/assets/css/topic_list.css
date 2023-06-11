@@ -169,3 +169,48 @@ a.bold {
 .answers.faded:hover {
     opacity: 1;
 }
+
+.select-wrap {
+    position: relative;
+    width: fit-content;
+}
+
+select {
+    background-color: rgba(17, 25, 40, 0.75);
+    color: rgba(255, 255, 255, 0.8);
+    font-family: "Noto Sans", sans-serif;
+    padding: 15px 20px;
+    outline: none;
+    border: none;
+    border-radius: 30px;
+    font-size: 12px;
+    min-width: 150px;
+}
+select {
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Chrome */
+    -webkit-appearance: none;
+}
+
+/* For IE10 */
+select::-ms-expand {
+    display: none;
+}
+
+.select-icon {
+    position: absolute;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    top: 0;
+    right: 20px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.filters-ctn {
+    display: flex;
+    gap: 15px;
+    margin: 10px 0;
+}
