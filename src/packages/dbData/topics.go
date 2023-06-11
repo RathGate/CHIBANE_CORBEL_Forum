@@ -151,6 +151,7 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 
 		data.Topics = append(data.Topics, *tempTopic)
 	}
+
 	return data, nil
 }
 
@@ -167,7 +168,6 @@ func GetPagesArr(t TopicFilters) []int {
 		for i := 2; i <= currPage; i++ {
 			result = append(result, i)
 		}
-		return result
 	} else if currPage <= 5 {
 		for i := 2; i <= 5; i++ {
 			result = append(result, i)
