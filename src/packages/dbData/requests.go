@@ -28,6 +28,13 @@ func WriteAllTopicsRequest(t TopicFilters) string {
 	// WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
+		}
+	} else {
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.category_id = %d", t.CategoryID))
+		}
 	}
 	// GROUP BY p.topic_id
 	stringBuilder = append(stringBuilder, "GROUP BY p.topic_id")
@@ -47,6 +54,13 @@ func WriteShortTopicRequest(t TopicFilters) string {
 		`JOIN posts AS p ON p.id = tfp.post_id`}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
+		}
+	} else {
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.category_id = %d", t.CategoryID))
+		}
 	}
 	return strings.Join(stringBuilder, "\n")
 }

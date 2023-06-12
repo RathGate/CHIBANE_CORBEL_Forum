@@ -5,4 +5,5 @@ type Data struct {
 	PageTitle  string
 	Topics     []Topic
 	Filters    TopicFilters
+	Categories []Category
 }

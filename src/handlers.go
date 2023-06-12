@@ -33,30 +33,33 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	categories, err := dbGetCategories()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// TEMPORARY:
+	http.Redirect(w, r, "/topics", http.StatusSeeOther)
 
-	data := struct {
-		Categories []dbData.Category
-	}{
-		Categories: categories,
-	}
+	// categories, err := dbGetCategories()
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 
-	// Generates template:
-	tmpl := template.New("index.html")
+	// data := struct {
+	// 	Categories []dbData.Category
+	// }{
+	// 	Categories: categories,
+	// }
 
-	// Parse the templates:
-	tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
+	// // Generates template:
+	// tmpl := template.New("index.html")
 
-	// Execute the templates
-	err = tmpl.ExecuteTemplate(w, "index.html", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// // Parse the templates:
+	// tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
+
+	// // Execute the templates
+	// err = tmpl.ExecuteTemplate(w, "index.html", data)
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
@@ -130,6 +133,14 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
+	categories, err := dbGetCategories()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	userData.Categories = categories
+
 	filters := dbData.RetrieveFilters(r)
 	temp, err := dbData.GetTopics(filters)
 	if err != nil {
@@ -143,11 +154,9 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
 		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
-		fmt.Println(filters)
 		return
 	}
-	fmt.Println(filters)
-	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html"})
+	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html"})
 	tmpl.Execute(w, userData)
 }
 

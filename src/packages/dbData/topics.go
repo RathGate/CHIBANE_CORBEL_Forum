@@ -31,6 +31,7 @@ type TopicFilters struct {
 	TimePeriod  int    `json:"timePeriod"`
 	CurrentPage int    `json:"currentPage"`
 	Limit       int    `json:"limit"`
+	CategoryID  int    `json:"category_id"`
 	ApplyLimit  bool
 	Results     struct {
 		PageCount   int `json:"pageCount"`
@@ -40,7 +41,7 @@ type TopicFilters struct {
 
 var DefaultTopicFilters = TopicFilters{
 	OrderBy:     "newest",
-	TimePeriod:  7,
+	TimePeriod:  -1,
 	CurrentPage: 1,
 	Limit:       10,
 	ApplyLimit:  true,
@@ -48,21 +49,29 @@ var DefaultTopicFilters = TopicFilters{
 
 func RetrieveFilters(r *http.Request) (result TopicFilters) {
 	var tempDate string
+	var tempCat string
 	if r.Method == "POST" {
 		result.OrderBy = r.FormValue("order")
 		result.CurrentPage = getIntFromString(r.FormValue("page"))
 		result.Limit = getIntFromString(r.FormValue("limit"))
 		tempDate = r.FormValue("timePeriod")
+		tempCat = r.FormValue("category")
 	} else {
 		result.OrderBy = r.URL.Query().Get("order")
 		result.CurrentPage = getIntFromString(r.URL.Query().Get("page"))
 		result.Limit = getIntFromString(r.URL.Query().Get("results"))
 		tempDate = r.URL.Query().Get("date")
+		tempCat = r.URL.Query().Get("category")
 	}
 	if tempDate == "all" {
 		result.TimePeriod = -1
 	} else {
 		result.TimePeriod = getIntFromString(tempDate)
+	}
+	if tempCat == "all" {
+		result.CategoryID = -1
+	} else {
+		result.CategoryID = getIntFromString(tempCat)
 	}
 	result.ApplyLimit = true
 	result.CorrectFilters()

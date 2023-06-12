@@ -12,29 +12,34 @@
     gap: 8px;
     list-style: none;
     border-radius: 8px;
-    z-index: 9999;
     padding: 16px;
     margin-left: 10vw;
-    margin-top: 10vh;
+    margin-top: 0;
 }
 
-.menu-item a {
+.menu-item > div {
     display: flex;
     align-content: center;
     align-items: center;
     text-decoration: none;
     color: #ffffff;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     padding:  8px 16px;
     border-radius: 16px;
 }
 
-.menu-cat-title {
-gap: 8px;
+.menu-cat-title label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.menu-item a:hover {
+.menu-cat-title * {
+    cursor: pointer;
+}
+
+.menu-item > div:hover {
     color: #796fff;
     transition: all .3s ease;
     background-color: #26254f

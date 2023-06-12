@@ -1,4 +1,4 @@
-let defaultValues = { "order": "newest", "date": 7, "page": 1 }
+let defaultValues = { "order": "newest", "date": "all", "page": 1, category:"all"}
 
 let dateSelect = document.querySelector("select#date")
 let orderSelect = document.querySelector("select#order")
@@ -27,7 +27,8 @@ function refreshTopics(pageIncrementation = 0) {
         {
             timePeriod: dateSelect.value,
             order: orderSelect.value,
-            page: getPageValue()
+            page: getInputValueByName("page"),
+            category: getInputValueByName("category")
         }, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -40,8 +41,8 @@ function refreshTopics(pageIncrementation = 0) {
     });
 }
 
-function getPageValue() {
-    let temp = document.querySelector('input[name="page"]:checked')
+function getInputValueByName(inputName) {
+    let temp = document.querySelector(`input[name="${inputName}"]:checked`)
 
     if (!temp) {
         return 1

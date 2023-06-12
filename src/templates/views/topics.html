@@ -16,6 +16,9 @@
     <body>
         {{ template "navbar"}}
         <main>
+            <div style="position:absolute;">
+                {{ template "categories" . }}
+            </div>
             <section class="topics middle">
                 <div class="filters-ctn">
                     <div class="select-wrap">
