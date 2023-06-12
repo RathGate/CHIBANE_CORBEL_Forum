@@ -48,7 +48,6 @@ var DefaultTopicFilters = TopicFilters{
 
 func RetrieveFilters(r *http.Request) (result TopicFilters) {
 	var tempDate string
-	fmt.Println(r.FormValue("page"))
 	if r.Method == "POST" {
 		result.OrderBy = r.FormValue("order")
 		result.CurrentPage = getIntFromString(r.FormValue("page"))
@@ -66,9 +65,7 @@ func RetrieveFilters(r *http.Request) (result TopicFilters) {
 		result.TimePeriod = getIntFromString(tempDate)
 	}
 	result.ApplyLimit = true
-	fmt.Println(result.CurrentPage)
 	result.CorrectFilters()
-	fmt.Println(result.CurrentPage)
 	return result
 }
 
