@@ -99,7 +99,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 
 		var stmt *sql.Stmt
-		stmt, err = db.Prepare("INSERT INTO users (username, password, email, role_id, isActive) VALUES (?, ?, ?, ?, ?)")
+		stmt, err = db.Prepare("INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -107,7 +107,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		defer stmt.Close()
 
 		var result sql.Result
-		result, err = stmt.Exec(username, password, email, 3, 1)
+		result, err = stmt.Exec(username, password, email, 3)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

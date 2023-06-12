@@ -15,6 +15,9 @@
 
     <body>
         {{ template "navbar"}}
+        {{template "register"}}
+        
+        {{template "login"}}
         <main>
             <div style="position:absolute;">
                 {{ template "categories" . }}
@@ -47,5 +50,6 @@
             </section>
         </main>
         <script src="/assets/js/topics.js"></script>
+        <script src="/assets/js/script.js"></script>
     </body>
 </html>
