@@ -11,7 +11,7 @@
                 </div>
                 {{ else }}
                 <div class="page-item page-btn">
-                    <input id="page-{{ . }}" class="hidden" type="radio" name="page" value="{{ . }}" 
+                    <input id="page-{{ . }}" class="hidden filter" type="radio" name="page" value="{{ . }}" 
                     {{ if eq . $.CurrentPage }}checked{{end}}>
                     <label for="page-{{ . }}">{{ . }}</label>
                 </div>

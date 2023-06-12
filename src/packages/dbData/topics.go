@@ -39,33 +39,41 @@ type TopicFilters struct {
 }
 
 var DefaultTopicFilters = TopicFilters{
-	OrderBy:     "score",
-	TimePeriod:  -1,
+	OrderBy:     "newest",
+	TimePeriod:  7,
 	CurrentPage: 1,
 	Limit:       10,
 	ApplyLimit:  true,
 }
 
 func RetrieveFilters(r *http.Request) (result TopicFilters) {
+	var tempDate string
+	fmt.Println(r.FormValue("page"))
 	if r.Method == "POST" {
 		result.OrderBy = r.FormValue("order")
-		result.TimePeriod = getIntFromString(r.FormValue("timePeriod"))
-		result.CurrentPage = getIntFromString(r.FormValue("currentPage"))
+		result.CurrentPage = getIntFromString(r.FormValue("page"))
 		result.Limit = getIntFromString(r.FormValue("limit"))
+		tempDate = r.FormValue("timePeriod")
 	} else {
 		result.OrderBy = r.URL.Query().Get("order")
-		result.TimePeriod = getIntFromString(r.URL.Query().Get("date"))
 		result.CurrentPage = getIntFromString(r.URL.Query().Get("page"))
 		result.Limit = getIntFromString(r.URL.Query().Get("results"))
+		tempDate = r.URL.Query().Get("date")
+	}
+	if tempDate == "all" {
+		result.TimePeriod = -1
+	} else {
+		result.TimePeriod = getIntFromString(tempDate)
 	}
 	result.ApplyLimit = true
-
+	fmt.Println(result.CurrentPage)
 	result.CorrectFilters()
+	fmt.Println(result.CurrentPage)
 	return result
 }
 
 func (t *TopicFilters) CorrectFilters() {
-	if !slices.Contains([]int{1, 7, 15, 30}, t.TimePeriod) {
+	if !slices.Contains([]int{-1, 1, 7, 15, 30}, t.TimePeriod) {
 		t.TimePeriod = DefaultTopicFilters.TimePeriod
 	}
 	if !slices.Contains([]int{5, 10, 25, 50}, t.Limit) {
@@ -151,7 +159,6 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 
 		data.Topics = append(data.Topics, *tempTopic)
 	}
-
 	return data, nil
 }
 
@@ -165,7 +172,7 @@ func GetPagesArr(t TopicFilters) []int {
 	}
 	// Number of total pages less or equal to 6
 	if totalPages <= 7 {
-		for i := 2; i <= currPage; i++ {
+		for i := 2; i <= totalPages-1; i++ {
 			result = append(result, i)
 		}
 	} else if currPage <= 5 {
@@ -185,7 +192,9 @@ func GetPagesArr(t TopicFilters) []int {
 		}
 		result = append(result, -1)
 	}
-	result = append(result, totalPages)
+	if totalPages > 1 {
+		result = append(result, totalPages)
+	}
 	return result
 }
 

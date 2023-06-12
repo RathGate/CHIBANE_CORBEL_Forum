@@ -143,9 +143,10 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
 		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
+		fmt.Println(filters)
 		return
 	}
-
+	fmt.Println(filters)
 	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html"})
 	tmpl.Execute(w, userData)
 }
