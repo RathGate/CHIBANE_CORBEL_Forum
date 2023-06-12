@@ -16,19 +16,27 @@
     <body>
         {{ template "navbar"}}
         <main>
-            <section class="topics">
-                <div class="filters-ctn"><select name="order-by" id="order-by">
-                        <option value="score">Score</option>
-                        <option value="newest" selected>Newest first</option>
-                        <option value="oldest">Oldest first</option>
+            <section class="topics middle">
+                <div class="filters-ctn">
+                    <div class="select-wrap">
+                        <select name="order" id="order" class="filter">
+                            <option value="score" {{ if eq .Filters.OrderBy "score"}}selected{{end}}>Score</option>
+                            <option value="newest" {{ if eq .Filters.OrderBy "newest"}}selected{{end}}>Newest first</option>
+                            <option value="oldest" {{ if eq .Filters.OrderBy "oldest"}}selected{{end}}>Oldest first</option>
+                        </select>
+                        <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+                    <div class="select-wrap">
+                    <select name="date" id="date" class="filter">
+                        <option {{ if eq .Filters.TimePeriod 1}}selected{{end}} value="1">Last 24h</option>
+                        <option value="7" {{ if eq .Filters.TimePeriod 7}}selected{{end}}>Last 7 days</option>
+                        <option value="15" {{ if eq .Filters.TimePeriod 15}}selected{{end}}>Last 15 days</option>
+                        <option value="30" {{ if eq .Filters.TimePeriod 30}}selected{{end}}>Last 30 days</option>
+                        <option value="all" {{ if eq .Filters.TimePeriod -1}}selected{{end}}>All time</option>
                     </select>
-                    <select name="date" id="date">
-                        <option value="1">Last 24h</option>
-                        <option value="7" selected>Last 7 days</option>
-                        <option value="15">Last 15 days</option>
-                        <option value="30">Last 30 days</option>
-                        <option value="-1">All time</option>
-                    </select>
+                    <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                    </div>
+
                 </div>
                 <div id="test">
                 {{ template "topics-ctn" . }}

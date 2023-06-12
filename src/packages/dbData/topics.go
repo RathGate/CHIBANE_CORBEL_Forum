@@ -39,33 +39,41 @@ type TopicFilters struct {
 }
 
 var DefaultTopicFilters = TopicFilters{
-	OrderBy:     "score",
-	TimePeriod:  -1,
+	OrderBy:     "newest",
+	TimePeriod:  7,
 	CurrentPage: 1,
 	Limit:       10,
 	ApplyLimit:  true,
 }
 
 func RetrieveFilters(r *http.Request) (result TopicFilters) {
+	var tempDate string
+	fmt.Println(r.FormValue("page"))
 	if r.Method == "POST" {
 		result.OrderBy = r.FormValue("order")
-		result.TimePeriod = getIntFromString(r.FormValue("timePeriod"))
-		result.CurrentPage = getIntFromString(r.FormValue("currentPage"))
+		result.CurrentPage = getIntFromString(r.FormValue("page"))
 		result.Limit = getIntFromString(r.FormValue("limit"))
+		tempDate = r.FormValue("timePeriod")
 	} else {
 		result.OrderBy = r.URL.Query().Get("order")
-		result.TimePeriod = getIntFromString(r.URL.Query().Get("date"))
 		result.CurrentPage = getIntFromString(r.URL.Query().Get("page"))
 		result.Limit = getIntFromString(r.URL.Query().Get("results"))
+		tempDate = r.URL.Query().Get("date")
+	}
+	if tempDate == "all" {
+		result.TimePeriod = -1
+	} else {
+		result.TimePeriod = getIntFromString(tempDate)
 	}
 	result.ApplyLimit = true
-
+	fmt.Println(result.CurrentPage)
 	result.CorrectFilters()
+	fmt.Println(result.CurrentPage)
 	return result
 }
 
 func (t *TopicFilters) CorrectFilters() {
-	if !slices.Contains([]int{1, 7, 15, 30}, t.TimePeriod) {
+	if !slices.Contains([]int{-1, 1, 7, 15, 30}, t.TimePeriod) {
 		t.TimePeriod = DefaultTopicFilters.TimePeriod
 	}
 	if !slices.Contains([]int{5, 10, 25, 50}, t.Limit) {
@@ -130,7 +138,6 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 	if data.Filters.CurrentPage < 1 {
 		data.Filters.CurrentPage = 1
 	}
-	fmt.Println(WriteAllTopicsRequest(data.Filters))
 	rows, _ := db.Query(WriteAllTopicsRequest(data.Filters))
 	if err != nil {
 		panic(err.Error())
@@ -153,4 +160,52 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 		data.Topics = append(data.Topics, *tempTopic)
 	}
 	return data, nil
+}
+
+func GetPagesArr(t TopicFilters) []int {
+	currPage := t.CurrentPage
+	totalPages := t.Results.PageCount
+	result := []int{1}
+	// No page or no result somehow
+	if currPage == 0 || totalPages == 0 {
+		return nil
+	}
+	// Number of total pages less or equal to 6
+	if totalPages <= 7 {
+		for i := 2; i <= totalPages-1; i++ {
+			result = append(result, i)
+		}
+	} else if currPage <= 5 {
+		for i := 2; i <= 5; i++ {
+			result = append(result, i)
+		}
+		result = append(result, -1)
+	} else if currPage <= totalPages-4 {
+		result = append(result, -1)
+		for i := totalPages - 4; i <= totalPages-1; i++ {
+			result = append(result, i)
+		}
+	} else {
+		result = append(result, -1)
+		for i := currPage - 1; i <= currPage+1; i++ {
+			result = append(result, i)
+		}
+		result = append(result, -1)
+	}
+	if totalPages > 1 {
+		result = append(result, totalPages)
+	}
+	return result
+}
+
+func GetPagesValues(t TopicFilters) (result [2]int) {
+	if t.Results.ResultCount == 0 {
+		return result
+	}
+	result[0] = 1 + (t.CurrentPage-1)*t.Limit
+	result[1] = result[0] + 9
+	if result[1] > t.Results.ResultCount {
+		result[1] = t.Results.ResultCount
+	}
+	return result
 }

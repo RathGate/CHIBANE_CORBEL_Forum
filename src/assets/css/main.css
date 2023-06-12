@@ -32,7 +32,9 @@ html, body {
     margin: 0;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background: linear-gradient(to right, #11192a, #26254f);
+    background: linear-gradient(-45deg, #11192a, #26254f);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: white;
     font-family: "Noto Sans", sans-serif;
     display: flex;

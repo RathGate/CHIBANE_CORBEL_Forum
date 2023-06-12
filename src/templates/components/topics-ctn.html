@@ -43,8 +43,5 @@
         </div>
         {{ end }}
     </div>
-    {{ if gt .Filters.CurrentPage 0 }}
-    <div>Current Page: {{.Filters.CurrentPage}} / {{.Filters.Results.PageCount}}</div>
-    <div>Total Results: {{.Filters.Results.ResultCount}}</div>
-    {{ end }}
+    {{ template "pagination" .Filters }}
 {{ end }}

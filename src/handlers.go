@@ -13,6 +13,8 @@ import (
 func generateTemplate(templateName string, filepaths []string) *template.Template {
 	tmpl, err := template.New(templateName).Funcs(template.FuncMap{
 		"getTimeSincePosted": dbData.GetTimeSincePosted,
+		"getPagesArr":        dbData.GetPagesArr,
+		"getPagesValues":     dbData.GetPagesValues,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -139,12 +141,13 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		r.ParseForm()
-		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html"})
+		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
 		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
+		fmt.Println(filters)
 		return
 	}
-
-	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html"})
+	fmt.Println(filters)
+	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html"})
 	tmpl.Execute(w, userData)
 }
 
