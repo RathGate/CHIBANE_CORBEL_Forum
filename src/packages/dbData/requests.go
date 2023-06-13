@@ -15,7 +15,7 @@ func WriteAllTopicsRequest(t TopicFilters) string {
 		`(SELECT COUNT(p.id) from posts as p WHERE p.id != tfp.post_id AND p.topic_id = t.id) as "answers",`,
 		`(SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 1) -`,
 		`(SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 2) as "score",`,
-		`(SELECT pr.reaction_id from post_reactions as pr WHERE pr.post_id = p.id AND pr.user_id = 2) as "current_user_reaction"`,
+		fmt.Sprintf(`(SELECT pr.reaction_id from post_reactions as pr WHERE pr.post_id = p.id AND pr.user_id = %d) as "current_user_reaction"`, t.UserID),
 		`FROM topic_first_posts AS tfp`,
 		`JOIN topics AS t ON tfp.topic_id = t.id`,
 		`JOIN posts AS p ON tfp.topic_id = p.topic_id`,

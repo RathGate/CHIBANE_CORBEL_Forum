@@ -142,6 +142,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	userData.Categories = categories
 
 	filters := dbData.RetrieveFilters(r)
+	filters.UserID = userData.UserID
 	temp, err := dbData.GetTopics(filters)
 	if err != nil {
 		fmt.Println("Error in handlers.go")
@@ -172,7 +173,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, fmt.Sprintf("/profile?id=%d&username=%s", user.ID, user.Username), http.StatusFound)
+		userData.IsLoggedIn = true
+		userData.Username = user.Username
+		userData.UserID = int(user.ID)
+		fmt.Println(userData)
+		http.Redirect(w, r, "/topics", http.StatusFound)
 		return
 	}
 

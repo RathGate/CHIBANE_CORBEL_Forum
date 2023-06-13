@@ -33,6 +33,7 @@ type TopicFilters struct {
 	Limit       int    `json:"limit"`
 	CategoryID  int    `json:"category_id"`
 	ApplyLimit  bool
+	UserID      int `json:"user_id"`
 	Results     struct {
 		PageCount   int `json:"pageCount"`
 		ResultCount int `json:"resultCount"`

@@ -7,8 +7,15 @@
             <button type="submit" class="search-btn"><i class="fa fa-search"></i></button>
         </div>
         <div class="nav-btns">
+            {{ if eq .Username "" }}
             <div class="creds-btn c-b-nav login">Log in</div>
             <div class="creds-btn c-b-nav register">Register</div>
+            {{ else }}
+            <div class="user">
+                <div><span class="username">{{.Username}}</span></div>
+                <div class="pfp"><img src="https://picsum.photos/seed/{{.Username}}/200" alt="pfp"></div>
+            </div>
+            {{ end }}
         </div>
     </nav>
 </header>

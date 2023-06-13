@@ -10,11 +10,12 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <title>Forum!</title>
+        <title>Topics | Trainers' Corner</title>
+        <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
     </head>
 
     <body>
-        {{ template "navbar"}}
+        {{ template "navbar" .}}
         {{template "register"}}
         
         {{template "login"}}
