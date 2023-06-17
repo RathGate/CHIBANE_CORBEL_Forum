@@ -104,11 +104,11 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		r.ParseForm()
-		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
-		tmpl.ExecuteTemplate(w, "topics-ctn", tData)
+		tmpl := generateTemplate("", []string{"templates/components/topic_list.html", "templates/components/pagination.html"})
+		tmpl.ExecuteTemplate(w, "topic_list", tData)
 		return
 	}
-	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/header.html", "templates/components/topics-ctn.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/popup_register.html", "templates/components/popup_login.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/popup_register.html", "templates/components/popup_login.html"})
 	tmpl.Execute(w, tData)
 }
 

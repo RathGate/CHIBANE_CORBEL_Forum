@@ -1,14 +1,4 @@
 {{ define "body" }}
-        
-        {{ template "header" .User}}
-        <div class="hide"></div>
-        {{ if not .User.IsAuthenticated }}
-        {{template "register" }}
-        
-        {{template "login"}}
-        {{end}}
-
-
-{{template "categories" .}}
-
+    {{ template "header" .User}}
+    {{template "categories" .}}
 {{ end }}
