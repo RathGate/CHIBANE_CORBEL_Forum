@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
+	"encoding/json"
 	"fmt"
 	"forum/packages/credentials"
-	"forum/packages/dbData"
+	"forum/packages/data"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,9 +12,9 @@ import (
 
 func generateTemplate(templateName string, filepaths []string) *template.Template {
 	tmpl, err := template.New(templateName).Funcs(template.FuncMap{
-		"getTimeSincePosted": dbData.GetTimeSincePosted,
-		"getPagesArr":        dbData.GetPagesArr,
-		"getPagesValues":     dbData.GetPagesValues,
+		"getTimeSincePosted": data.GetTimeSincePosted,
+		"getPagesArr":        data.GetPagesArr,
+		"getPagesValues":     data.GetPagesValues,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -33,40 +33,41 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// TEMPORARY:
-	http.Redirect(w, r, "/topics", http.StatusSeeOther)
+	currentUser := getSession(r)
 
-	// categories, err := dbGetCategories()
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	categories, err := dbGetCategories()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	// data := struct {
-	// 	Categories []dbData.Category
-	// }{
-	// 	Categories: categories,
-	// }
+	data := struct {
+		User       data.ShortUser
+		Categories []data.Category
+	}{
+		Categories: categories,
+		User:       currentUser,
+	}
 
-	// // Generates template:
-	// tmpl := template.New("index.html")
+	// Generates template:
+	tmpl := template.New("index.html")
 
-	// // Parse the templates:
-	// tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
+	// Parse the templates:
+	tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
 
-	// // Execute the templates
-	// err = tmpl.ExecuteTemplate(w, "index.html", data)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	// Execute the templates
+	err = tmpl.ExecuteTemplate(w, "index.html", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
 func registerHandler(w http.ResponseWriter, r *http.Request) {
+	_ = getSession(r)
 	if r.Method == "POST" {
-
-		err := r.ParseMultipartForm(10 << 20)
+		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -76,55 +77,14 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		email := r.FormValue("email")
 
-		if len(password) < 8 {
-			http.Error(w, "Password must be at least 8 characters long", http.StatusBadRequest)
-			return
+		formValidation, lastInsertedID := credentials.RegisterNewUser(username, password, email)
+		if lastInsertedID > 0 {
+			err = setSession(r, &w, lastInsertedID)
+			fmt.Println(err)
 		}
 
-		if !credentials.ContainsLetter(password) || !credentials.ContainsDigit(password) || !credentials.ContainsSpecialChar(password) {
-			http.Error(w, "Password must contain at least one letter, one digit, and one special character", http.StatusBadRequest)
-			return
-		}
-
-		if !credentials.IsValidEmail(email) {
-			http.Error(w, "Invalid email address", http.StatusBadRequest)
-			return
-		}
-
-		db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer db.Close()
-
-		var stmt *sql.Stmt
-		stmt, err = db.Prepare("INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer stmt.Close()
-
-		var result sql.Result
-		result, err = stmt.Exec(username, password, email, 3)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if rowsAffected > 0 {
-			http.Redirect(w, r, "/success", http.StatusFound)
-		} else {
-
-			http.Redirect(w, r, "/error", http.StatusFound)
-		}
+		jsonValues, _ := json.Marshal(formValidation)
+		w.Write(jsonValues)
 		return
 	}
 
@@ -133,6 +93,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
+	userData.User = getSession(r)
 	categories, err := dbGetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -141,9 +102,9 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	userData.Categories = categories
 
-	filters := dbData.RetrieveFilters(r)
+	filters := data.RetrieveFilters(r)
 	filters.UserID = userData.UserID
-	temp, err := dbData.GetTopics(filters)
+	temp, err := data.GetTopics(filters)
 	if err != nil {
 		fmt.Println("Error in handlers.go")
 		log.Fatal(err)
@@ -164,20 +125,17 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 /* loginHandler handles the login form and redirects to the profile page */
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
+		var formValidation credentials.FormValidation
+		var userID int
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		user, err := credentials.ValidateUser(username, password)
-		if err != nil {
-			http.Redirect(w, r, "/error", http.StatusFound)
-			return
+		formValidation, userID = credentials.CheckUserCredentials(username, password)
+		if userID > 0 {
+			_ = setSession(r, &w, userID)
 		}
-
-		userData.IsLoggedIn = true
-		userData.Username = user.Username
-		userData.UserID = int(user.ID)
-		fmt.Println(userData)
-		http.Redirect(w, r, "/topics", http.StatusFound)
+		jsonValues, _ := json.Marshal(formValidation)
+		w.Write(jsonValues)
 		return
 	}
 
@@ -227,7 +185,7 @@ func catHandler(w http.ResponseWriter, r *http.Request) {
 	data := struct {
 		ID         string
 		Name       string
-		Categories []dbData.Category
+		Categories []data.Category
 	}{
 		ID:         id,
 		Name:       name,
@@ -239,4 +197,9 @@ func catHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(r, &w)
+	http.Redirect(w, r, "/topics", http.StatusSeeOther)
 }

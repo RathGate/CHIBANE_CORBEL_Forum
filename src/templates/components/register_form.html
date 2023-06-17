@@ -1,37 +1,42 @@
 {{define "register"}}
-<div class="register-ctn" style="display: none">
+<div class="register-ctn">
     <!-- REGISTER FORM -->
-    <form action="/register" method="POST" class="register-form" enctype="multipart/form-data">
-        <!-- USERNAME -->
-        <div class="close-btn"><img src="assets/img/close.png"></div>
-        <div class="input-field">
-            <label for="username">Choose a username:</label>
-            <input type="text" id="username" name="username" required maxlength="20" oninput="return usernameValidation()">
-            <div id="usernameError" class="error"></div>
+    <form id="register-form" method="post" class="register-form">
+        <div class="title">Sign Up !</div>
+        <div class="content">
+            <!-- USERNAME -->
+            <div class="close-btn">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <div class="input-field">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter Username" maxlength="20" value="ennaria"
+                    oninput="return usernameValidation()">
+                <div id="usernameError" class="error"></div>
+            </div>
+            <!-- EMAIL -->
+            <div class="input-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email" maxlength="255" value="mariannecorbel@hotmail.fr"
+                    oninput="return emailValidation()">
+                <div id="emailError" class="error"></div>
+            </div>
+            <!-- PASSWORD -->
+            <div class="input-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter Password" maxlength="255" value="1A2bcdefg_"
+                    oninput="return passwordValidation()">
+                <div id="passwordError" class="error"></div>
+            </div>
+            <div class="register-terms">
+                <label for="tos">
+                    <input id="tos" name="tos" type="checkbox" class="hidden">
+                    <div class="checkmark"></div>
+                    <span class="text">By creating an account, you agree to Trainers' Corner Terms of Service.</span>
+                </label>
+            </div>
+            <button type="submit" class="creds-btn">Create an Account!</button>
         </div>
-        <!-- PASSWORD -->
-        <div class="input-field">
-            <label for="password">Choose a password:</label>
-            <input type="password" id="password" name="password" required maxlength="255" oninput="return passwordValidation()">
-            <div id="passwordError" class="error"></div>
-        </div>
-        <!-- EMAIL -->
-        <div class="input-field">
-            <label for="email">Email address:</label>
-            <input type="email" id="email" name="email" required maxlength="255" oninput="return emailValidation()">
-            <div id="emailError" class="error"></div>
-        </div>
-        <!-- BIRTHDATE
-        <div class="input-field">
-            <label for="birthdate">Birthdate:</label>
-            <input type="date" id="birthdate" name="birthdate" required>
-        </div>-->
-        <!-- PROFILE PICTURE
-        <div>
-            <label for="profile_picture">Choose a profile picture:</label>
-            <input type="file" id="profile_picture" name="profile_picture">
-        </div>-->
-        <button type="submit" class="creds-btn">Register</button>
     </form>
 </div>
 {{end}}

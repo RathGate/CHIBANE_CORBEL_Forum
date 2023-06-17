@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"forum/packages/dbData"
+	"forum/packages/data"
 	"log"
 	"net/http"
 
@@ -37,7 +37,7 @@ import (
 //	fmt.Println(len(allUsers))
 //}
 
-func dbGetCategories() ([]dbData.Category, error) {
+func dbGetCategories() ([]data.Category, error) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		return nil, err
@@ -50,9 +50,9 @@ func dbGetCategories() ([]dbData.Category, error) {
 	}
 	defer rows.Close()
 
-	var categories []dbData.Category
+	var categories []data.Category
 	for rows.Next() {
-		var category dbData.Category
+		var category data.Category
 		err := rows.Scan(&category.ID, &category.Name)
 		if err != nil {
 			return nil, err
@@ -67,9 +67,26 @@ func dbGetCategories() ([]dbData.Category, error) {
 	return categories, nil
 }
 
-var userData dbData.Data
+func autoDelete() {
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`DELETE FROM users WHERE username = "ennaria"`)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer rows.Close()
+}
+
+var userData data.Data
 
 func main() {
+	autoDelete()
 	r := mux.NewRouter()
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
@@ -81,6 +98,7 @@ func main() {
 	r.HandleFunc("/success", successHandler)
 	r.HandleFunc("/error", errorHandler)
 	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/topics", topicsHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 

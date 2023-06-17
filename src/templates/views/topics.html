@@ -15,10 +15,13 @@
     </head>
 
     <body>
-        {{ template "navbar" .}}
-        {{template "register"}}
+        <div class="hide"></div>
+        {{ template "navbar" .User}}
+        {{ if not .User.IsAuthenticated }}
+        {{template "register" }}
         
         {{template "login"}}
+        {{end}}
         <main>
             <div style="position:absolute;">
                 {{ template "categories" . }}

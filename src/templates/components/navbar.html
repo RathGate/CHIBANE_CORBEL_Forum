@@ -7,7 +7,7 @@
             <button type="submit" class="search-btn"><i class="fa fa-search"></i></button>
         </div>
         <div class="nav-btns">
-            {{ if eq .Username "" }}
+            {{ if not .IsAuthenticated }}
             <div class="creds-btn c-b-nav login">Log in</div>
             <div class="creds-btn c-b-nav register">Register</div>
             {{ else }}

@@ -1,21 +1,26 @@
 {{define "login"}}
-    <div class="login-ctn" style="display: none">
-        <form action="/login" method="POST" class="login-form">
-            <div class="close-btn"><img src="assets/img/close.png"></div>
-            <div class="input-field">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="input-field">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
+    <div class="login-ctn">
+        <form id="login-form" method="post" class="login-form">
+            <div class="title">Sign In !</div>
+            <div class="content">
+            <!-- USERNAME -->
+                <div class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="input-field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Username" value="ennaria" required>
+                </div>
+                <div class="input-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter Password" value="1A2bcdefg_" required>
+                </div>
 
-            {{if .Error}}
-                <div class="error-msg">{{.Error}}</div>
-            {{end}}
-
-            <button type="submit" class="creds-btn">Log in</button>
+                {{if .Error}}
+                    <div class="error-msg">{{.Error}}</div>
+                {{end}}
+                <button type="submit" class="creds-btn">Log in</button>
+                </div>
         </form>
     </div>
 {{end}}

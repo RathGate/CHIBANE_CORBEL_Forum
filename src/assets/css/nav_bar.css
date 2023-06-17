@@ -4,7 +4,7 @@ header {
     left: 0;
     height: 70px;
     width: 100%;
-    z-index: 100;
+    z-index: 10;
     background-color: #26254f;
 }
 
