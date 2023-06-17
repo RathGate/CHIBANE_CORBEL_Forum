@@ -16,7 +16,7 @@
 
     <body>
         <div class="hide"></div>
-        {{ template "navbar" .User}}
+        {{ template "header" .User}}
         {{ if not .User.IsAuthenticated }}
         {{template "register" }}
         

@@ -24,48 +24,34 @@ func generateTemplate(templateName string, filepaths []string) *template.Templat
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "404 Not Found"
 	w.WriteHeader(http.StatusNotFound)
-	// *Generates and executes templates:
-	tmpl := generateTemplate("index.html", []string{"templates/views/index.html"})
-	tmpl.Execute(w, userData)
 
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/404.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	currentUser := getSession(r)
+	tData := getSession(r)
+	tData.PageTitle = "Home"
 
 	categories, err := dbGetCategories()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		log.Fatal(err)
 	}
+	tData.Categories = categories
 
-	data := struct {
-		User       data.ShortUser
-		Categories []data.Category
-	}{
-		Categories: categories,
-		User:       currentUser,
-	}
-
-	// Generates template:
-	tmpl := template.New("index.html")
-
-	// Parse the templates:
-	tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
-
-	// Execute the templates
-	err = tmpl.ExecuteTemplate(w, "index.html", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/header.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
 func registerHandler(w http.ResponseWriter, r *http.Request) {
-	_ = getSession(r)
+	tData := getSession(r)
+	tData.PageTitle = "Register"
+
 	if r.Method == "POST" {
 		err := r.ParseForm()
 		if err != nil {
@@ -88,38 +74,41 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/components/register_form.html"))
+	tmpl := template.Must(template.ParseFiles("templates/components/popup_register.html"))
 	tmpl.Execute(w, nil)
 }
 
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
-	userData.User = getSession(r)
+	tData := getSession(r)
+	tData.PageTitle = "Register"
+
 	categories, err := dbGetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userData.Categories = categories
+	tData.Categories = categories
 
 	filters := data.RetrieveFilters(r)
-	filters.UserID = userData.UserID
+	filters.UserID = tData.User.ID
+
 	temp, err := data.GetTopics(filters)
 	if err != nil {
 		fmt.Println("Error in handlers.go")
 		log.Fatal(err)
 	}
-	userData.Topics = temp.Topics
-	userData.Filters = temp.Filters
+	tData.Topics = temp.Topics
+	tData.Filters = temp.Filters
 
 	if r.Method == "POST" {
 		r.ParseForm()
 		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
-		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
+		tmpl.ExecuteTemplate(w, "topics-ctn", tData)
 		return
 	}
-	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html"})
-	tmpl.Execute(w, userData)
+	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/header.html", "templates/components/topics-ctn.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/popup_register.html", "templates/components/popup_login.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* loginHandler handles the login form and redirects to the profile page */
@@ -139,7 +128,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/components/login_form.html"))
+	tmpl := template.Must(template.ParseFiles("templates/components/popup_login.html"))
 	tmpl.Execute(w, nil)
 }
 

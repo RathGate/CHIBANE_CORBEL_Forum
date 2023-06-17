@@ -57,8 +57,6 @@ func autoDelete() {
 	defer rows.Close()
 }
 
-var userData data.Data
-
 func main() {
 	autoDelete()
 	r := mux.NewRouter()
@@ -66,11 +64,11 @@ func main() {
 
 	// Handles routing:
 	r.HandleFunc("/", indexHandler)
-	r.HandleFunc("/categories", catHandler)
+	// r.HandleFunc("/categories", catHandler)
 	r.HandleFunc("/register", registerHandler)
-	r.HandleFunc("/profile", profileHandler)
-	r.HandleFunc("/success", successHandler)
-	r.HandleFunc("/error", errorHandler)
+	// r.HandleFunc("/profile", profileHandler)
+	// r.HandleFunc("/success", successHandler)
+	// r.HandleFunc("/error", errorHandler)
 	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/topics", topicsHandler)

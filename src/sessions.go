@@ -42,16 +42,16 @@ func clearSession(r *http.Request, w *http.ResponseWriter) {
 	session.Save(r, *w)
 }
 
-func getSession(r *http.Request) (user data.ShortUser) {
+func getSession(r *http.Request) (tData data.TemplateData) {
 	session, _ := store.Get(r, cookieName)
 	if (session.Values["authenticated"] == nil || !session.Values["authenticated"].(bool)) || !(session.Values["id"].(int) > 0) {
-		return user
+		return tData
 	}
 
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		fmt.Println(err)
-		return user
+		return tData
 	}
 	defer db.Close()
 
@@ -59,12 +59,14 @@ func getSession(r *http.Request) (user data.ShortUser) {
 	err = db.QueryRow(fmt.Sprintf(`SELECT username FROM users WHERE id = %d`, session.Values["id"].(int))).Scan(&tempUsername)
 	if err != nil || tempUsername == "" {
 		fmt.Println(err)
-		return user
+		return tData
 	}
 
-	user.ID = session.Values["id"].(int)
-	user.Username = tempUsername
-	user.IsAuthenticated = true
+	tData.User = data.TemplateUser{
+		ID:              session.Values["id"].(int),
+		Username:        tempUsername,
+		IsAuthenticated: true,
+	}
 
-	return user
+	return tData
 }

@@ -3,7 +3,6 @@
         <form id="login-form" method="post" class="login-form">
             <div class="title">Sign In !</div>
             <div class="content">
-            <!-- USERNAME -->
                 <div class="close-btn">
                     <i class="fa-solid fa-xmark"></i>
                 </div>
@@ -15,10 +14,7 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" placeholder="Enter Password" value="1A2bcdefg_" required>
                 </div>
-
-                {{if .Error}}
-                    <div class="error-msg">{{.Error}}</div>
-                {{end}}
+                <div class="error-msg"></div>
                 <button type="submit" class="creds-btn">Log in</button>
                 </div>
         </form>
