@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"forum/packages/credentials"
 	"forum/packages/data"
+	"forum/packages/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,9 +13,9 @@ import (
 
 func generateTemplate(templateName string, filepaths []string) *template.Template {
 	tmpl, err := template.New(templateName).Funcs(template.FuncMap{
-		"getTimeSincePosted": data.GetTimeSincePosted,
-		"getPagesArr":        data.GetPagesArr,
-		"getPagesValues":     data.GetPagesValues,
+		"getTimeSincePosted":  utils.GetTimeSincePosted,
+		"getPagesArr":         utils.GetPagesArr,
+		"GetPaginationValues": utils.GetPaginationValues,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -37,7 +38,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Home"
 
-	categories, err := dbGetCategories()
+	categories, err := data.GetCategories()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,7 +83,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Register"
 
-	categories, err := dbGetCategories()
+	categories, err := data.GetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -93,7 +94,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	filters := data.RetrieveFilters(r)
 	filters.UserID = tData.User.ID
 
-	temp, err := data.GetTopics(filters)
+	temp, err := data.GetTopicListData(filters)
 	if err != nil {
 		fmt.Println("Error in handlers.go")
 		log.Fatal(err)
@@ -130,62 +131,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("templates/components/popup_login.html"))
 	tmpl.Execute(w, nil)
-}
-
-/* profileHandler handles the profile page */
-func profileHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	username := r.URL.Query().Get("username")
-
-	data := struct {
-		ID       string
-		Username string
-	}{
-		ID:       id,
-		Username: username,
-	}
-
-	tmpl := template.Must(template.ParseFiles("templates/views/profile.html"))
-	tmpl.Execute(w, data)
-}
-
-/* Temporary redirections for testing purposes */
-func successHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/results/success.html"))
-	tmpl.Execute(w, nil)
-}
-
-func errorHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/results/error.html"))
-	tmpl.Execute(w, nil)
-}
-
-/* Temporary redirections for testing purposes */
-
-/* catHandler handles the category navigation */
-func catHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	name := r.URL.Query().Get("name")
-	categories, err := dbGetCategories()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	data := struct {
-		ID         string
-		Name       string
-		Categories []data.Category
-	}{
-		ID:         id,
-		Name:       name,
-		Categories: categories,
-	}
-
-	tmpl := template.Must(template.New("categories").ParseFiles("templates/components/cat_navigation.html"))
-	err = tmpl.ExecuteTemplate(w, "categories", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {

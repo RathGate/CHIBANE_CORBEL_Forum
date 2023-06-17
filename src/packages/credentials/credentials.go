@@ -11,6 +11,19 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// *FORM STRUCTS
+
+type FormValidation struct {
+	Status        int         `json:"status"`
+	InvalidFields []FormField `json:"fields"`
+}
+type FormField struct {
+	Name     string `json:"name"`
+	ErrorMsg string `json:"errorMsg"`
+}
+
+// *FORMAT CHECKING FUNCTIONS
+
 func ContainsAny(password string, f func(rune) bool) bool {
 	for _, char := range password {
 		if f(char) {
@@ -39,29 +52,29 @@ func IsValidEmail(email string) bool {
 }
 
 func IsValidUsername(username string) bool {
-	regex := regexp.MustCompile(`^(?=.*[a-zA-Z])[a-zA-Z0-9_-]{3,20}$`)
+	regex := regexp.MustCompile(`^(.*[a-zA-Z])[a-zA-Z0-9_-]{3,20}$`)
 	return regex.MatchString(username)
 }
 
+// *HASH FUNCTIONS
+
+// Returns the hashed version of parameter password.
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
+// Checks if string password corresponds to hashed password.
 func CheckPasswordHash(password, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
-type FormField struct {
-	Name     string `json:"name"`
-	ErrorMsg string `json:"errorMsg"`
-}
-type FormValidation struct {
-	Status        int         `json:"status"`
-	InvalidFields []FormField `json:"fields"`
-}
+// *LOGIN CHECKS AND FUNCTIONS
 
+// Checks user credentials validity.
+// Returns a json summary of the request, intended to be read by JS, as well as
+// the ID of the user if existing.
 func CheckUserCredentials(username, password string) (formValidation FormValidation, userID int) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
@@ -90,8 +103,12 @@ func CheckUserCredentials(username, password string) (formValidation FormValidat
 	return formValidation, userID
 }
 
-func RegisterNewUser(username, password, email string) (formValidation FormValidation, lastInserted int) {
+// *REGISTER CHECKS AND FUNCTIONS
 
+// Global function checking credentials and adding new user to DB if possible.
+// Returns a json summary of the request (intended to be read by javascript),
+// and if user successfully inserted, returns their ID as well.
+func RegisterNewUser(username, password, email string) (formValidation FormValidation, lastInserted int) {
 	if len(password) < 8 {
 		formValidation.InvalidFields = append(formValidation.InvalidFields, FormField{
 			Name:     "password",
@@ -141,6 +158,8 @@ func RegisterNewUser(username, password, email string) (formValidation FormValid
 	return formValidation, lastInserted
 }
 
+// Adds user to database.
+// Returns response status and newly-inserted user ID if successful
 func addUserToDatabase(username, password, email string) (status int, id int) {
 	hashPassword, err := HashPassword(password)
 	if err != nil {
@@ -170,10 +189,10 @@ func addUserToDatabase(username, password, email string) (status int, id int) {
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}
-
 	return http.StatusOK, int(lid)
 }
 
+// Checks if password and email are already existing in the database
 func userExistsInDatabase(username, email string) (usernameResult, emailResult bool, status int) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
@@ -194,6 +213,5 @@ func userExistsInDatabase(username, email string) (usernameResult, emailResult b
 	if err := row.Scan(&tempID_2); err != nil && err != sql.ErrNoRows {
 		return false, false, http.StatusInternalServerError
 	}
-
 	return tempID_1.Valid, tempID_2.Valid, http.StatusOK
 }

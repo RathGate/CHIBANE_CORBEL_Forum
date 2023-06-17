@@ -6,13 +6,13 @@ import (
 	"forum/packages/utils"
 	"math"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"golang.org/x/exp/slices"
 )
 
+// *STRUCTURES
 type Topic struct {
 	ID                  int64          `json:"id"`
 	Title               string         `json:"title"`
@@ -25,7 +25,6 @@ type Topic struct {
 	Tags                []string       `json:"tags"`
 	CurrentUserReaction sql.NullInt64  `json:"current_user_reaction"`
 }
-
 type TopicFilters struct {
 	OrderBy     string `json:"orderBy"`
 	TimePeriod  int    `json:"timePeriod"`
@@ -40,6 +39,17 @@ type TopicFilters struct {
 	} `json:"result"`
 }
 
+type Tag struct {
+	Name  string
+	Color string
+}
+
+type TopicData struct {
+	Topics  []Topic
+	Filters TopicFilters
+}
+
+// *DEFAULT FILTER VALUES
 var DefaultTopicFilters = TopicFilters{
 	OrderBy:     "newest",
 	TimePeriod:  -1,
@@ -48,37 +58,43 @@ var DefaultTopicFilters = TopicFilters{
 	ApplyLimit:  true,
 }
 
+// *FUNCTIONS AND METHODS
+
+// Retrieves the filters from the URL if GET request, and from form if POST request.
+// Note: if a specific filter has no value, DefaultTopicFilters values are used.
 func RetrieveFilters(r *http.Request) (result TopicFilters) {
 	var tempDate string
 	var tempCat string
 	if r.Method == "POST" {
 		result.OrderBy = r.FormValue("order")
-		result.CurrentPage = getIntFromString(r.FormValue("page"))
-		result.Limit = getIntFromString(r.FormValue("limit"))
+		result.CurrentPage = utils.GetIntFromString(r.FormValue("page"))
+		result.Limit = utils.GetIntFromString(r.FormValue("limit"))
 		tempDate = r.FormValue("timePeriod")
 		tempCat = r.FormValue("category")
 	} else {
 		result.OrderBy = r.URL.Query().Get("order")
-		result.CurrentPage = getIntFromString(r.URL.Query().Get("page"))
-		result.Limit = getIntFromString(r.URL.Query().Get("results"))
+		result.CurrentPage = utils.GetIntFromString(r.URL.Query().Get("page"))
+		result.Limit = utils.GetIntFromString(r.URL.Query().Get("results"))
 		tempDate = r.URL.Query().Get("date")
 		tempCat = r.URL.Query().Get("category")
 	}
 	if tempDate == "all" {
 		result.TimePeriod = -1
 	} else {
-		result.TimePeriod = getIntFromString(tempDate)
+		result.TimePeriod = utils.GetIntFromString(tempDate)
 	}
 	if tempCat == "all" {
 		result.CategoryID = -1
 	} else {
-		result.CategoryID = getIntFromString(tempCat)
+		result.CategoryID = utils.GetIntFromString(tempCat)
 	}
 	result.ApplyLimit = true
 	result.CorrectFilters()
 	return result
 }
 
+// Checks if all filter values are correct.
+// If not correct or not specified, uses DefaultTopicFilters Values instead.
 func (t *TopicFilters) CorrectFilters() {
 	if !slices.Contains([]int{-1, 1, 7, 15, 30}, t.TimePeriod) {
 		t.TimePeriod = DefaultTopicFilters.TimePeriod
@@ -95,33 +111,8 @@ func (t *TopicFilters) CorrectFilters() {
 	t.ApplyLimit = true
 }
 
-func getIntFromString(str string) int {
-	if value, err := strconv.Atoi(str); err != nil || value < 1 {
-		return 0
-	} else {
-		return value
-	}
-}
-
-type TopicData struct {
-	Topics  []Topic
-	Filters TopicFilters
-}
-
-func GetTimeSincePosted(topic Topic) string {
-	timeValues := utils.GetDeltaValues(topic.CreationDate, time.Now())
-	timeNames := []string{"yr", "mo", "d", "hr", "min", "sec"}
-	for i, value := range timeValues {
-		if value > 0 {
-			return fmt.Sprintf("%02d%s ago", value, timeNames[i])
-		}
-	}
-	return "now"
-}
-
-func GetTopics(filters TopicFilters) (TopicData, error) {
-	// Tags are stored in a "tag1;tag2;tag3" way.
-	// Require to be splitted when received from the database.
+// Retrieves all base data from topics given specific filters, and their total count.
+func GetTopicListData(filters TopicFilters) (TopicData, error) {
 	var tempTags sql.NullString
 	data := TopicData{Filters: filters}
 
@@ -131,12 +122,16 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 	}
 	defer db.Close()
 
-	// ? Gets the total number of rows
-	row := db.QueryRow(WriteShortTopicRequest(data.Filters))
+	// ?Gets the total number of rows, regardless of limit and offset filters
+	row := db.QueryRow(QueryTopicCount(data.Filters))
 
 	if err := row.Scan(&data.Filters.Results.ResultCount); err != nil {
 		return data, err
 	}
+
+	// Corrects the original filter data if they are not relevant compared
+	// to results (for example, user requested page 20 but there are only
+	// 2 pages of results).
 	data.Filters.Results.PageCount = int(math.Ceil(float64(data.Filters.Results.ResultCount) / float64(data.Filters.Limit)))
 
 	if data.Filters.CurrentPage > data.Filters.Results.PageCount {
@@ -145,11 +140,14 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 	if data.Filters.CurrentPage < 1 {
 		data.Filters.CurrentPage = 1
 	}
-	rows, _ := db.Query(WriteAllTopicsRequest(data.Filters))
+
+	// ?Gets the base data for all topics with all filters applied, including limit and offset
+	rows, _ := db.Query(QueryTopicsData(data.Filters))
 	if err != nil {
-		panic(err.Error())
+		return data, err
 	}
 
+	// Iterates over rows to store data
 	for rows.Next() {
 		tempTopic := new(Topic)
 		err := rows.Scan(&tempTopic.ID, &tempTopic.Category, &tempTopic.Title, &tempTopic.Content, &tempTopic.Username, &tempTags, &tempTopic.CreationDate, &tempTopic.Answers, &tempTopic.Score, &tempTopic.CurrentUserReaction)
@@ -161,6 +159,7 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 		if tempTags.Valid {
 			tempTopic.Tags = strings.Split(tempTags.String, ";")
 		}
+
 		// Converts corrupted date to UTC:
 		utils.TimeToUTC(&tempTopic.CreationDate)
 
@@ -169,50 +168,66 @@ func GetTopics(filters TopicFilters) (TopicData, error) {
 	return data, nil
 }
 
-func GetPagesArr(t TopicFilters) []int {
-	currPage := t.CurrentPage
-	totalPages := t.Results.PageCount
-	result := []int{1}
-	// No page or no result somehow
-	if currPage == 0 || totalPages == 0 {
-		return nil
+// *QUERIES TO DATABASE
+
+// Queries topic list base data from data base.
+func QueryTopicsData(t TopicFilters) string {
+	var orderByValues = map[string]string{
+		"score":  "ORDER BY score DESC",
+		"newest": "ORDER BY p.creation_date DESC",
+		"oldest": "ORDER BY p.creation_date",
 	}
-	// Number of total pages less or equal to 6
-	if totalPages <= 7 {
-		for i := 2; i <= totalPages-1; i++ {
-			result = append(result, i)
-		}
-	} else if currPage <= 5 {
-		for i := 2; i <= 5; i++ {
-			result = append(result, i)
-		}
-		result = append(result, -1)
-	} else if currPage <= totalPages-4 {
-		result = append(result, -1)
-		for i := totalPages - 4; i <= totalPages-1; i++ {
-			result = append(result, i)
+	var stringBuilder = []string{`SELECT t.id, c.name, t.title, p.content, u.username, GROUP_CONCAT(DISTINCT tags.name SEPARATOR ";") as "tags", p.creation_date,`,
+		`(SELECT COUNT(p.id) from posts as p WHERE p.id != tfp.post_id AND p.topic_id = t.id) as "answers",`,
+		`(SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 1) -`,
+		`(SELECT COUNT(pr.post_id) from post_reactions as pr where pr.post_id = p.id and pr.reaction_id = 2) as "score",`,
+		fmt.Sprintf(`(SELECT pr.reaction_id from post_reactions as pr WHERE pr.post_id = p.id AND pr.user_id = %d) as "current_user_reaction"`, t.UserID),
+		`FROM topic_first_posts AS tfp`,
+		`JOIN topics AS t ON tfp.topic_id = t.id`,
+		`JOIN posts AS p ON tfp.topic_id = p.topic_id`,
+		`LEFT JOIN post_reactions AS pr ON pr.post_id = p.id`,
+		`LEFT JOIN topic_tags AS tag ON t.id = tag.topic_id`,
+		`LEFT JOIN tags ON tag.tag_id = tags.id`,
+		`LEFT JOIN users AS u ON p.user_id = u.id`,
+		`JOIN categories AS c ON c.id = t.category_id`}
+
+	// WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)
+	if t.TimePeriod > 0 {
+		stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
 		}
 	} else {
-		result = append(result, -1)
-		for i := currPage - 1; i <= currPage+1; i++ {
-			result = append(result, i)
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.category_id = %d", t.CategoryID))
 		}
-		result = append(result, -1)
 	}
-	if totalPages > 1 {
-		result = append(result, totalPages)
+	// GROUP BY p.topic_id
+	stringBuilder = append(stringBuilder, "GROUP BY p.topic_id")
+	// ORDER BY %s DESC/ASC
+	stringBuilder = append(stringBuilder, orderByValues[t.OrderBy])
+
+	// LIMIT %d OFFSET %d
+	if t.ApplyLimit {
+		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
-	return result
+	return strings.Join(stringBuilder, "\n")
 }
 
-func GetPagesValues(t TopicFilters) (result [2]int) {
-	if t.Results.ResultCount == 0 {
-		return result
+// Queries total topic count from database
+func QueryTopicCount(t TopicFilters) string {
+	var stringBuilder = []string{`SELECT COUNT(*) FROM topics AS t`,
+		`JOIN topic_first_posts AS tfp ON t.id = tfp.topic_id`,
+		`JOIN posts AS p ON p.id = tfp.post_id`}
+	if t.TimePeriod > 0 {
+		stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE p.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
+		}
+	} else {
+		if t.CategoryID > 0 {
+			stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.category_id = %d", t.CategoryID))
+		}
 	}
-	result[0] = 1 + (t.CurrentPage-1)*t.Limit
-	result[1] = result[0] + 9
-	if result[1] > t.Results.ResultCount {
-		result[1] = t.Results.ResultCount
-	}
-	return result
+	return strings.Join(stringBuilder, "\n")
 }
