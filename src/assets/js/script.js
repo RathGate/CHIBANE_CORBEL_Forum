@@ -202,3 +202,9 @@ function changeInnerText(divID, content) {
         div.classList.add("visible")
     }
 }
+
+document.querySelectorAll('input[name="radio-test"]').forEach(element => {
+    element.addEventListener("change", function () {
+        console.log(element, "changed ! Refreshing !")
+    })
+})

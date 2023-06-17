@@ -44,7 +44,6 @@ func clearSession(r *http.Request, w *http.ResponseWriter) {
 
 func getSession(r *http.Request) (user data.ShortUser) {
 	session, _ := store.Get(r, cookieName)
-	fmt.Println(session.Values)
 	if (session.Values["authenticated"] == nil || !session.Values["authenticated"].(bool)) || !(session.Values["id"].(int) > 0) {
 		return user
 	}

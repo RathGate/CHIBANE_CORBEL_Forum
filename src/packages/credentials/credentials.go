@@ -8,6 +8,7 @@ import (
 	"unicode"
 
 	"github.com/asaskevich/govalidator"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func ContainsAny(password string, f func(rune) bool) bool {
@@ -42,31 +43,15 @@ func IsValidUsername(username string) bool {
 	return regex.MatchString(username)
 }
 
-// TODO
-// func LoginUser(username, password string) (user data.ShortUser, err error) {
-// 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
-// 	if err != nil {
-// 		return user, err
-// 	}
-// 	defer db.Close()
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
 
-// 	var tempID int
-// 	var tempUsername string
-// 	err = db.QueryRow("SELECT id, username, password FROM users WHERE username = ?", username).Scan(&tempID, &tempUsername)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			fmt.Println("User not found")
-// 			return user, err
-// 		}
-// 		fmt.Println(err)
-// 		return user, err
-// 	}
-
-// 	if user.Password != password {
-// 		return nil, fmt.Errorf("invalid password")
-// 	}
-// 	return &user, nil
-// }
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
 
 type FormField struct {
 	Name     string `json:"name"`
@@ -85,24 +70,24 @@ func CheckUserCredentials(username, password string) (formValidation FormValidat
 	}
 	defer db.Close()
 
-	var tempID sql.NullInt64
-	row := db.QueryRow(fmt.Sprintf(`SELECT id FROM users WHERE username = "%s" AND password = "%s"`, username, password))
+	var hashPassword string
+	row := db.QueryRow(fmt.Sprintf(`SELECT id, password FROM users WHERE username = "%s"`, username))
 
-	if err := row.Scan(&tempID); err != nil {
-		if err == sql.ErrNoRows {
-			formValidation.Status = http.StatusBadRequest
-			formValidation.InvalidFields = append(formValidation.InvalidFields, FormField{
-				Name:     "username",
-				ErrorMsg: "Incorrect username or password",
-			})
-			return formValidation, -1
-		}
+	err = row.Scan(&userID, &hashPassword)
+
+	if err == sql.ErrNoRows || !CheckPasswordHash(password, hashPassword) {
+		formValidation.Status = http.StatusBadRequest
+		formValidation.InvalidFields = append(formValidation.InvalidFields, FormField{
+			Name:     "username",
+			ErrorMsg: "Incorrect username or password",
+		})
+		return formValidation, -1
+	} else if err != nil {
 		formValidation.Status = http.StatusInternalServerError
 		return formValidation, -1
 	}
-
 	formValidation.Status = http.StatusOK
-	return formValidation, int(tempID.Int64)
+	return formValidation, userID
 }
 
 func RegisterNewUser(username, password, email string) (formValidation FormValidation, lastInserted int) {
@@ -157,6 +142,11 @@ func RegisterNewUser(username, password, email string) (formValidation FormValid
 }
 
 func addUserToDatabase(username, password, email string) (status int, id int) {
+	hashPassword, err := HashPassword(password)
+	if err != nil {
+		return http.StatusInternalServerError, 0
+	}
+
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
 		return http.StatusInternalServerError, 0
@@ -171,7 +161,7 @@ func addUserToDatabase(username, password, email string) (status int, id int) {
 	defer stmt.Close()
 
 	var result sql.Result
-	result, err = stmt.Exec(username, password, email, 3)
+	result, err = stmt.Exec(username, hashPassword, email, 3)
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}

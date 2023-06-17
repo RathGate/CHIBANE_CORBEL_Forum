@@ -1,9 +1,10 @@
-let defaultValues = { "order": "newest", "date": "all", "page": 1, category:"all"}
+let defaultValues = { "order": "newest", "date": "all", "page": 1, category: "all" }
 
 let dateSelect = document.querySelector("select#date")
 let orderSelect = document.querySelector("select#order")
 let pageRadio = document.querySelector('input[name="page"]')
 let allFilterInputs = document.querySelectorAll(".filter")
+let currentCategory
 
 allFilterInputs.forEach(element => {
     element.addEventListener("change", function () {
@@ -13,9 +14,10 @@ allFilterInputs.forEach(element => {
 })
 
 function addPaginationListeners() {
-    let pageInputs = document.querySelectorAll("input[type='radio'].filter")
+    let pageInputs = document.querySelectorAll('input[name="category"]')
     pageInputs.forEach(element => {
         element.addEventListener("change", function () {
+            console.log(element, "changed! Refreshing")
             updateQueryStringParameter(element.name, element.value)
             refreshTopics()
         })

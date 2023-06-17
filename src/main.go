@@ -11,32 +11,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//func dbGetUsers() {
-//	var allUsers []*structs.User
-//	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
-//	if err != nil {
-//		panic(err.Error())
-//	}
-//	defer db.Close()
-//	fmt.Println("Success!")
-//
-//	rows, _ := db.Query("SELECT id, username, password, birthdate, creation_date, lastvisit_date FROM users")
-//	if err != nil {
-//		panic(err.Error())
-//	}
-//
-//	for rows.Next() {
-//		u := new(structs.User)
-//		err := rows.Scan(&u.ID, &u.Username, &u.Password, &u.Birthdate, &u.CreationDate, &u.LastVistDate)
-//		if err != nil {
-//			log.Fatal(err)
-//		}
-//		allUsers = append(allUsers, u)
-//		fmt.Println(u)
-//	}
-//	fmt.Println(len(allUsers))
-//}
-
 func dbGetCategories() ([]data.Category, error) {
 	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
 	if err != nil {
