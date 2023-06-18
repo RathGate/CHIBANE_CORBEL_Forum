@@ -24,7 +24,7 @@ func setSession(r *http.Request, w *http.ResponseWriter, userID int) error {
 	defer db.Close()
 
 	var tempUsername string
-	err = db.QueryRow(fmt.Sprintf(`SELECT username FROM users WHERE id = %d`, userID)).Scan(&tempUsername)
+	err = db.QueryRow(`SELECT username FROM users WHERE id = ?`, userID).Scan(&tempUsername)
 	if err != nil || tempUsername == "" {
 		fmt.Println(err)
 		return err
@@ -56,7 +56,7 @@ func getSession(r *http.Request) (tData data.TemplateData) {
 	defer db.Close()
 
 	var tempUsername string
-	err = db.QueryRow(fmt.Sprintf(`SELECT username FROM users WHERE id = %d`, session.Values["id"].(int))).Scan(&tempUsername)
+	err = db.QueryRow(`SELECT username FROM users WHERE id = ?`, session.Values["id"].(int)).Scan(&tempUsername)
 	if err != nil || tempUsername == "" {
 		fmt.Println(err)
 		return tData

@@ -137,3 +137,8 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	clearSession(r, &w)
 	http.Redirect(w, r, "/topics", http.StatusSeeOther)
 }
+
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/test.html"))
+	tmpl.Execute(w, nil)
+}

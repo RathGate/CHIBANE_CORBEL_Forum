@@ -1,0 +1,50 @@
+@import url(header.css);
+@import url(navigation.css);
+@import url(content.css);
+@import url(ads.css);
+@import url(topic_list.css);
+
+:root {
+    --color-bg: #1d1b22;
+    --color-lighter-purple: #b369ff;
+    --color-fg: #ffffff;
+    --color-light-purple: #5d36e8;
+    --max-width: 1450px;
+    --purple-gradient: linear-gradient(45deg, var(--color-light-purple), var(--color-lighter-purple));
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: unset;
+}
+
+body,
+html {
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    background-color: var(--color-bg);
+    font-family: "Noto Sans", sans-serif;
+    color: var(--color-fg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    -webkit-tap-highlight-color: transparent;
+}
+
+main {
+    padding-top: 75px;
+    flex-shrink: 0;
+    flex: 1;
+}
+
+section {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 25px;
+}
