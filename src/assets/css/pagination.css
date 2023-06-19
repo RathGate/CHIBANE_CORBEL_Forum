@@ -7,11 +7,13 @@
     flex-direction: column;
     gap: 5px;
 }
+
 .result-count {
     align-self: flex-end;
     font-size: 14px;
     opacity: .35;
 }
+
 .pages-ctn {
     height: 20px;
     display: flex;
@@ -28,7 +30,8 @@
     border: 1px solid transparent;
 }
 
-.page-item label, .page-item div {
+.page-item label,
+.page-item div {
     height: 100%;
     padding: 0 10px;
     border-radius: 15px;
@@ -38,7 +41,8 @@
     font-size: 13px;
 
 }
-.page-item.clickable:hover{
+
+.page-item.clickable:hover {
     border-color: #b369ff;
 }
 
@@ -55,11 +59,12 @@ input.hidden {
     overflow: hidden;
 }
 
-input[name="page"]:checked ~ label {
+input[name="page"]:checked~label {
     border-color: #b369ff;
 }
 
-.page-btn.prev, .page-btn.next {
+.page-btn.prev,
+.page-btn.next {
     font-size: 14px;
     padding: 0 8px;
 }

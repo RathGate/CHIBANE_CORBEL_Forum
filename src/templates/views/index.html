@@ -1,4 +1,14 @@
 {{ define "body" }}
-    {{ template "header" .User}}
-    {{template "categories" .}}
+{{ template "header" .User }}
+<main>
+    <section class="topics">
+        {{ template "column_nav" . }}
+        <div class="center-part main-content">
+            Bonjour !!
+        </div>
+        {{ template "column_ads" .User }}
+    </section>
+</main>
+{{ template "footer" }}
+<script src="assets/js/topics.js"></script>
 {{ end }}

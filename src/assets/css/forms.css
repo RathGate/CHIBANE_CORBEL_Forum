@@ -30,7 +30,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap:40px;
+    gap: 40px;
     width: 100%;
     max-width: 600px;
     padding: 60px 20px 50px;
@@ -109,12 +109,14 @@
     transition: border-color 0.2s ease;
     color: white;
 }
+
 .input-field input::placeholder {
     font-size: 13px;
     font-family: "Noto Sans", sans-serif;
 }
 
-.input-field input:focus, .input-field input:hover {
+.input-field input:focus,
+.input-field input:hover {
     border-color: #c489ff9f;
 }
 
@@ -127,6 +129,7 @@
     font-weight: bold;
     overflow-wrap: break-word;
 }
+
 .error.visible {
     display: block;
 }
@@ -137,11 +140,14 @@
     opacity: 1;
 }
 
-.register-ctn .title, .login-ctn .title {
+.register-ctn .title,
+.login-ctn .title {
     color: white;
     font-size: 28px;
 }
-.register-ctn .content, .login-ctn .content {
+
+.register-ctn .content,
+.login-ctn .content {
     width: 100%;
     max-width: 300px;
     display: flex;
@@ -149,7 +155,9 @@
     align-items: center;
     gap: 10px;
 }
-.register-ctn .input-field , .login-ctn .input-field {
+
+.register-ctn .input-field,
+.login-ctn .input-field {
     width: 100%;
 }
 
@@ -161,7 +169,7 @@
 }
 
 
-.register-terms label{
+.register-terms label {
     display: flex;
     align-items: flex-start;
     gap: 10px;
