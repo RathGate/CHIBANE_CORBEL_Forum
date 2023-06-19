@@ -4,11 +4,16 @@
     <section class="topics">
         {{ template "column_nav" . }}
         <div class="center-part main-content">
-            Bonjour !!
+            {{template "categories_display" .}}
+            <span class="cut">. . . . . . .</span>
+            {{template "latest_news" .}}
         </div>
         {{ template "column_ads" .User }}
     </section>
 </main>
 {{ template "footer" }}
-<script src="assets/js/topics.js"></script>
+<script src="/assets/js/topics.js"></script>
+<script src="/assets/js/rss.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 {{ end }}

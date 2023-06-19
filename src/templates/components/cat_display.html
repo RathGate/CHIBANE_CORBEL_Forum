@@ -1,0 +1,19 @@
+{{define "categories_display"}}
+    <div class="cat-display-ctn">
+        <div class="cat-display-title">What do you want to explore today?</div>
+        <div class="categories-card">
+
+            {{ range .Categories }}
+                <div class="category-card">
+                    <a href="/topics?category={{ .ID }}" class="category-link">
+                        <div class="category-card-name">{{ .Name }}</div>
+                        <div class="count">
+                            <span class="topics-count">{{ .TopicCount }}  {{ if eq .TopicCount 1 }}topic{{ else }}topics{{ end }} </span>
+                            <span class="posts-count">{{ .PostCount }}  {{ if eq .PostCount 1 }}post{{ else }}posts{{ end }}</span>
+                        </div>
+                    </a>
+                </div>
+            {{ end }}
+        </div>
+    </div>
+{{end}}
