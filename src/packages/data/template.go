@@ -6,6 +6,7 @@ type TemplateData struct {
 	Topics     []Topic
 	Filters    TopicFilters
 	Categories []Category
+	// Ici
 }
 
 type TemplateUser struct {

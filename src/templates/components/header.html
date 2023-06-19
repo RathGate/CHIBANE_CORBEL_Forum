@@ -21,7 +21,7 @@
                 {{ else }}
                     <div class="nav-profile">
                         <div class="greets">Hi, <span class="username">{{ .Username }}</span> !</div>
-                        <div class="pfp"><img src="assets/img/pfp.png" alt="User profile picture"></div>
+                        <div class="pfp"><img src="/assets/img/pfp.png" alt="User profile picture"></div>
                     </div>
                 {{ end }}
             </div>
@@ -30,7 +30,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 {{ if .IsAuthenticated }}
-                    <div class="nav-btn profile"><img src="assets/img/pfp.png" alt=""></div>
+                    <div class="nav-btn profile"><img src="/assets/img/pfp.png" alt=""></div>
                     <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
                 {{ end }}
             </div>
