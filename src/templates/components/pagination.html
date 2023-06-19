@@ -1,5 +1,5 @@
 {{ define "pagination" }}
-    {{ $pageArr := getPagesArr . }}
+    {{ $pageArr := getPagesArr .CurrentPage .Results.PageCount }}
     {{ if gt .Results.ResultCount 0}}
     <div class="pagination-bloc">
         <div class="pages-ctn">
@@ -19,7 +19,8 @@
             {{ end }}
             <div class="page-btn next"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
-    <div class="result-count">Results: {{ index (getPagesValues .) 0 }} - {{ index (getPagesValues .) 1 }} of {{ .Results.ResultCount }}</div>
+    {{ $bounds := (GetPaginationValues .CurrentPage .Results.ResultCount .Limit) }}
+    <div class="result-count">Results: {{ $bounds.minBound }} - {{ $bounds.maxBound }} of {{ .Results.ResultCount }}</div>
     </div>
     {{end}}
 {{ end }}

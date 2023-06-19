@@ -1,10 +1,11 @@
 package main
 
 import (
-	"database/sql"
+	"encoding/json"
 	"fmt"
 	"forum/packages/credentials"
-	"forum/packages/dbData"
+	"forum/packages/data"
+	"forum/packages/utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,9 +13,9 @@ import (
 
 func generateTemplate(templateName string, filepaths []string) *template.Template {
 	tmpl, err := template.New(templateName).Funcs(template.FuncMap{
-		"getTimeSincePosted": dbData.GetTimeSincePosted,
-		"getPagesArr":        dbData.GetPagesArr,
-		"getPagesValues":     dbData.GetPagesValues,
+		"getTimeSincePosted":  utils.GetTimeSincePosted,
+		"getPagesArr":         utils.GetPagesArr,
+		"GetPaginationValues": utils.GetPaginationValues,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -24,49 +25,36 @@ func generateTemplate(templateName string, filepaths []string) *template.Templat
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "404 Not Found"
 	w.WriteHeader(http.StatusNotFound)
-	// *Generates and executes templates:
-	tmpl := generateTemplate("index.html", []string{"templates/views/index.html"})
-	tmpl.Execute(w, userData)
 
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/404.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// TEMPORARY:
-	http.Redirect(w, r, "/topics", http.StatusSeeOther)
+	tData := getSession(r)
+	tData.PageTitle = "Home"
 
-	// categories, err := dbGetCategories()
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	categories, err := data.GetCategories()
+	if err != nil {
+		log.Fatal(err)
+	}
+	tData.Categories = categories
 
-	// data := struct {
-	// 	Categories []dbData.Category
-	// }{
-	// 	Categories: categories,
-	// }
-
-	// // Generates template:
-	// tmpl := template.New("index.html")
-
-	// // Parse the templates:
-	// tmpl = template.Must(tmpl.ParseFiles("templates/views/index.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html", "templates/components/navbar.html"))
-
-	// // Execute the templates
-	// err = tmpl.ExecuteTemplate(w, "index.html", data)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-	// 	return
-	// }
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
 func registerHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
+	tData := getSession(r)
+	tData.PageTitle = "Register"
 
-		err := r.ParseMultipartForm(10 << 20)
+	if r.Method == "POST" {
+		err := r.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -76,167 +64,81 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		email := r.FormValue("email")
 
-		if len(password) < 8 {
-			http.Error(w, "Password must be at least 8 characters long", http.StatusBadRequest)
-			return
+		formValidation, lastInsertedID := credentials.RegisterNewUser(username, password, email)
+		if lastInsertedID > 0 {
+			err = setSession(r, &w, lastInsertedID)
+			fmt.Println(err)
 		}
 
-		if !credentials.ContainsLetter(password) || !credentials.ContainsDigit(password) || !credentials.ContainsSpecialChar(password) {
-			http.Error(w, "Password must contain at least one letter, one digit, and one special character", http.StatusBadRequest)
-			return
-		}
-
-		if !credentials.IsValidEmail(email) {
-			http.Error(w, "Invalid email address", http.StatusBadRequest)
-			return
-		}
-
-		db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer db.Close()
-
-		var stmt *sql.Stmt
-		stmt, err = db.Prepare("INSERT INTO users (username, password, email, role_id) VALUES (?, ?, ?, ?)")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer stmt.Close()
-
-		var result sql.Result
-		result, err = stmt.Exec(username, password, email, 3)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		rowsAffected, err := result.RowsAffected()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		if rowsAffected > 0 {
-			http.Redirect(w, r, "/success", http.StatusFound)
-		} else {
-
-			http.Redirect(w, r, "/error", http.StatusFound)
-		}
+		jsonValues, _ := json.Marshal(formValidation)
+		w.Write(jsonValues)
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/components/register_form.html"))
+	tmpl := template.Must(template.ParseFiles("templates/components/popup_register.html"))
 	tmpl.Execute(w, nil)
 }
 
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
-	categories, err := dbGetCategories()
+	tData := getSession(r)
+	tData.PageTitle = "Topics"
+
+	categories, err := data.GetCategories()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	userData.Categories = categories
+	tData.Categories = categories
 
-	filters := dbData.RetrieveFilters(r)
-	filters.UserID = userData.UserID
-	temp, err := dbData.GetTopics(filters)
+	filters := data.RetrieveFilters(r)
+	filters.UserID = tData.User.ID
+
+	temp, err := data.GetTopicListData(filters)
 	if err != nil {
 		fmt.Println("Error in handlers.go")
 		log.Fatal(err)
 	}
-	userData.Topics = temp.Topics
-	userData.Filters = temp.Filters
+	tData.Topics = temp.Topics
+	tData.Filters = temp.Filters
 
 	if r.Method == "POST" {
 		r.ParseForm()
-		tmpl := generateTemplate("", []string{"templates/components/topics-ctn.html", "templates/components/pagination.html"})
-		tmpl.ExecuteTemplate(w, "topics-ctn", userData)
+		tmpl := generateTemplate("", []string{"templates/components/topic_list.html", "templates/components/pagination.html"})
+		tmpl.ExecuteTemplate(w, "topic_list", tData)
 		return
 	}
-	tmpl := generateTemplate("topics.html", []string{"templates/views/topics.html", "templates/components/navbar.html", "templates/components/topics-ctn.html", "templates/components/pagination.html", "templates/components/cat_navigation.html", "templates/components/register_form.html", "templates/components/login_form.html"})
-	tmpl.Execute(w, userData)
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl.Execute(w, tData)
 }
 
 /* loginHandler handles the login form and redirects to the profile page */
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
+		var formValidation credentials.FormValidation
+		var userID int
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		user, err := credentials.ValidateUser(username, password)
-		if err != nil {
-			http.Redirect(w, r, "/error", http.StatusFound)
-			return
+		formValidation, userID = credentials.CheckUserCredentials(username, password)
+		if userID > 0 {
+			_ = setSession(r, &w, userID)
 		}
-
-		userData.IsLoggedIn = true
-		userData.Username = user.Username
-		userData.UserID = int(user.ID)
-		fmt.Println(userData)
-		http.Redirect(w, r, "/topics", http.StatusFound)
+		jsonValues, _ := json.Marshal(formValidation)
+		w.Write(jsonValues)
 		return
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/components/login_form.html"))
+	tmpl := template.Must(template.ParseFiles("templates/components/popup_login.html"))
 	tmpl.Execute(w, nil)
 }
 
-/* profileHandler handles the profile page */
-func profileHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	username := r.URL.Query().Get("username")
-
-	data := struct {
-		ID       string
-		Username string
-	}{
-		ID:       id,
-		Username: username,
-	}
-
-	tmpl := template.Must(template.ParseFiles("templates/views/profile.html"))
-	tmpl.Execute(w, data)
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(r, &w)
+	http.Redirect(w, r, "/topics", http.StatusSeeOther)
 }
 
-/* Temporary redirections for testing purposes */
-func successHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/results/success.html"))
+func testHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/test.html"))
 	tmpl.Execute(w, nil)
-}
-
-func errorHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/results/error.html"))
-	tmpl.Execute(w, nil)
-}
-
-/* Temporary redirections for testing purposes */
-
-/* catHandler handles the category navigation */
-func catHandler(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	name := r.URL.Query().Get("name")
-	categories, err := dbGetCategories()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	data := struct {
-		ID         string
-		Name       string
-		Categories []dbData.Category
-	}{
-		ID:         id,
-		Name:       name,
-		Categories: categories,
-	}
-
-	tmpl := template.Must(template.New("categories").ParseFiles("templates/components/cat_navigation.html"))
-	err = tmpl.ExecuteTemplate(w, "categories", data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }

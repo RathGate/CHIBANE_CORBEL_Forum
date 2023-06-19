@@ -1,0 +1,90 @@
+.top-users-container, .ad {
+    border-radius: 15px;
+    width: 100%;
+    height: fit-content;
+    background-color: rgba(255, 255, 255, .03);
+    padding:  15px;
+}
+.ad.lit img {
+    max-width: 100%;
+}
+.top-users-container .title {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+    gap: 5px;
+    position: relative;
+    margin-bottom: 25px;
+}
+.top-users-container .title::after {
+    content: ". . . . .";
+    width: 100%;
+    position: absolute;
+    bottom: -15px;
+    text-align: center;
+    left: 0;
+    opacity: .5;
+}
+.top-users-container img {
+    display: block;
+    max-height: 100%;
+    max-width: 100%;
+}
+.trainer-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.trainer-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    height: 30px;
+    gap: 7px;
+}
+.trainer-item.you {
+    grid-template-columns: auto auto 1fr auto;
+    margin-top: 15px;
+    position: relative;
+}
+.trainer-item.you::before {
+    position: absolute;
+    content: "";
+    height: 1px;
+    width: 100%;
+    top: -12px;
+    left: 0;
+    background-color: white;
+    opacity: .2;
+}
+.trainer-item .pfp {
+    height: inherit;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.trainer-item .username {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--color-lighter-purple);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    overflow: hidden;
+}
+.trainer-item .score {
+    opacity: .5;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.trainer-item .position {
+    font-size: 13px;
+}
+.trainer-item .score .g-icon {
+    font-size: 19px;
+}

@@ -1,56 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/assets/css/main.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <title>Topics | Trainers' Corner</title>
-        <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
-    </head>
-
-    <body>
-        {{ template "navbar" .}}
-        {{template "register"}}
-        
-        {{template "login"}}
-        <main>
-            <div style="position:absolute;">
-                {{ template "categories" . }}
-            </div>
-            <section class="topics middle">
+{{ define "body" }}
+    {{ template "header" .User }}
+    <main>
+        <section class="topics">
+            {{ template "column_nav" . }}
+            <div class="center-part main-content">
                 <div class="filters-ctn">
                     <div class="select-wrap">
                         <select name="order" id="order" class="filter">
-                            <option value="score" {{ if eq .Filters.OrderBy "score"}}selected{{end}}>Score</option>
-                            <option value="newest" {{ if eq .Filters.OrderBy "newest"}}selected{{end}}>Newest first</option>
-                            <option value="oldest" {{ if eq .Filters.OrderBy "oldest"}}selected{{end}}>Oldest first</option>
+                            <option value="score" {{ if eq .Filters.OrderBy "score" }}selected{{end}}>Score</option>
+                            <option value="newest" {{ if eq .Filters.OrderBy "newest" }}selected{{end}}>Newest first</option>
+                            <option value="oldest" {{ if eq .Filters.OrderBy "oldest" }}selected{{end}}>Oldest first</option>
                         </select>
                         <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
                     </div>
                     <div class="select-wrap">
-                    <select name="date" id="date" class="filter">
-                        <option {{ if eq .Filters.TimePeriod 1}}selected{{end}} value="1">Last 24h</option>
-                        <option value="7" {{ if eq .Filters.TimePeriod 7}}selected{{end}}>Last 7 days</option>
-                        <option value="15" {{ if eq .Filters.TimePeriod 15}}selected{{end}}>Last 15 days</option>
-                        <option value="30" {{ if eq .Filters.TimePeriod 30}}selected{{end}}>Last 30 days</option>
-                        <option value="all" {{ if eq .Filters.TimePeriod -1}}selected{{end}}>All time</option>
-                    </select>
-                    <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                        <select name="date" id="date" class="filter">
+                            <option {{ if eq .Filters.TimePeriod 1}}selected{{end}} value="1">Last 24h</option>
+                            <option value="7" {{ if eq .Filters.TimePeriod 7}}selected{{end}}>Last 7 days</option>
+                            <option value="15" {{ if eq .Filters.TimePeriod 15}}selected{{end}}>Last 15 days</option>
+                            <option value="30" {{ if eq .Filters.TimePeriod 30}}selected{{end}}>Last 30 days</option>
+                            <option value="all" {{ if eq .Filters.TimePeriod -1}}selected{{end}}>All time</option>
+                        </select>
+                        <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div>
                     </div>
-
+                
                 </div>
                 <div id="test">
-                {{ template "topics-ctn" . }}
+                    {{ template "topic_list" . }}
                 </div>
-            </section>
-        </main>
-        <script src="/assets/js/topics.js"></script>
-        <script src="/assets/js/script.js"></script>
-    </body>
-</html>
+            </div>
+            {{ template "column_ads" .User }}
+        </section>
+    </main>
+    {{ template "footer" }}
+    <script src="assets/js/topics.js"></script>
+{{ end }}

@@ -1,3 +1,22 @@
+.topic-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+}
+.topic-item {
+    background-color: rgba(255, 255, 255, .03);
+    border-radius: 15px;
+    padding: 25px 25px 25px 5px;
+    display: flex;
+}
+.topic-item .karma {
+    width: 75px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .topics.middle {
     width: 100%;
     max-width: 750px;
@@ -10,32 +29,29 @@
     gap: 10px;
 }
 
-.topic-item {
-    width: 100%;
-    border-radius: 5px;
-    background-color: rgba(17, 25, 40, 0.75);
-    margin: 0 auto;
-    display: flex;
-    padding: 25px 25px 25px 5px;
-    box-shadow: 2px 2px 10px 5px rgba(57, 57, 57, 0.1);
-}
 .ti-content {
     flex: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
 }
+
 .ti-score {
     width: 75px;
 }
-.ti-score > * {
+
+.ti-score>* {
     opacity: .5;
 }
-.ti-score.positive.voted span, .ti-score.positive.voted .fa-arrow-up {
+
+.ti-score.positive.voted span,
+.ti-score.positive.voted .fa-arrow-up {
     color: rgb(0, 232, 104);
     opacity: 1;
 }
-.ti-score.negative.voted span, .ti-score.negative.voted .fa-arrow-down {
+
+.ti-score.negative.voted span,
+.ti-score.negative.voted .fa-arrow-down {
     color: rgb(255, 66, 110);
     opacity: 1;
 }
@@ -43,20 +59,22 @@
 .ti-score .fa-solid:hover {
     opacity: 1 !important;
 }
+
 .ti-score i {
     font-size: 20px;
     transition: opacity .15s ease;
     cursor: pointer;
 }
+
 .ti-score span {
     margin: 3px 0;
     font-weight: bold;
     position: relative;
     top: -1px;
 }
+
 .ti-title {
     font-size: 20px;
-    font-weight: bold;
     line-height: 1.60rem;
     max-height: 3.2rem;
     height: fit-content;
@@ -69,21 +87,27 @@
     overflow: hidden;
     margin-bottom: 3px;
 }
+
 .ti-tag-container {
+    margin-top: 3px;
     display: flex;
     gap: 5px;
 }
+
 .ti-tag-item {
     font-size: 12px;
     text-transform: uppercase;
-    padding: 0 3px;
+    padding: 0 5px;
     border-radius: 3px;
-    background-color: var(--color-fg);
-    color: var(--color-bg);
+    background: var(--purple-gradient);
+    font-weight: bold;
+    letter-spacing: 1px;
 }
+
 .ti-tag-item.category {
     background-color: rgb(74, 164, 199);
 }
+
 .ti-body {
     font-size: 15px;
     margin: 13px 0 35px;
@@ -98,6 +122,7 @@
     display: -webkit-box;
     overflow: hidden;
 }
+
 .ti-footer::before {
     width: 100%;
     height: 1px;
@@ -108,6 +133,7 @@
     background-color: gray;
     opacity: .5;
 }
+
 .ti-footer {
     display: flex;
     align-items: center;
@@ -115,6 +141,7 @@
     font-size: 13px;
     position: relative;
 }
+
 .ti-footer .left {
     display: flex;
     align-items: center;
@@ -127,11 +154,13 @@
     align-items: center;
     font-size: 13px;
 }
+
 .ti-profile .pfp {
     width: 25px;
-    border-radius: 50%;
+    border-radius: 15px;
     overflow: hidden;
 }
+
 .pfp.unknown {
     background-color: gray;
 }
@@ -140,9 +169,11 @@ img {
     display: block;
     max-width: 100%;
 }
+
 a.bold {
     color: blueviolet;
 }
+
 .bold {
     font-weight: bold;
 }
@@ -152,6 +183,7 @@ a.bold {
     flex-direction: column;
     align-items: center;
 }
+
 .ti-footer .answers {
     display: flex;
     align-items: center;
@@ -160,12 +192,15 @@ a.bold {
     font-weight: bold;
     transition: .15s ease;
 }
+
 .ti-footer i {
     font-size: 16px;
 }
+
 .faded {
     opacity: 75%;
 }
+
 .answers.faded:hover {
     opacity: 1;
 }
@@ -186,6 +221,7 @@ select {
     font-size: 12px;
     min-width: 150px;
 }
+
 select {
     /* for Firefox */
     -moz-appearance: none;

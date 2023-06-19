@@ -1,4 +1,4 @@
-{{ define "topics-ctn" }}
+{{ define "topic_list" }}
     <div class="topics-container">
         {{ range .Topics }}
         <div class="topic-item">
@@ -23,7 +23,7 @@
                     <div class="left">
                         <div class="ti-profile">
                             {{ if .Username.Valid }}
-                            <div class="pfp"><img src="https://picsum.photos/seed/{{.Username.String}}/200"
+                            <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username.String}}"
                                     alt="User profile picture"></div>
                             <div class="username"><span class="faded">Posted by </span></span><a
                                     class="bold">{{.Username.String}}</a></div>
@@ -32,7 +32,7 @@
                             <div class="username faded">Posted by <span class="bold">deleted user</span></div>
                             {{ end }}
                         </div>
-                        <div class="ti-time faded">{{ getTimeSincePosted .}}</div>
+                        <div class="ti-time faded">{{ getTimeSincePosted .CreationDate}}</div>
                     </div>
                     <div class="right">
                         <div class="answers faded"><i class="fa-regular fa-comments"></i>{{.Answers}}</div>

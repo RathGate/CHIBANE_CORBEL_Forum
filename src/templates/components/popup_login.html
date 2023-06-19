@@ -1,0 +1,22 @@
+{{define "login"}}
+    <div class="login-ctn">
+        <form id="login-form" method="post" class="login-form">
+            <div class="title">Sign In !</div>
+            <div class="content">
+                <div class="close-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="input-field">
+                    <label for="username">Username</label>
+                    <input type="text" class="username input" name="username" placeholder="Enter Username" autofocus required>
+                </div>
+                <div class="input-field">
+                    <label for="password">Password</label>
+                    <input type="password" class="password input" name="password" placeholder="Enter Password" required>
+                </div>
+                <div class="error-msg"></div>
+                <button type="submit" class="creds-btn">Log in</button>
+                </div>
+        </form>
+    </div>
+{{end}}

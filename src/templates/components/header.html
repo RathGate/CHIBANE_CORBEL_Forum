@@ -1,0 +1,46 @@
+{{ define "header" }}
+    <header>
+        <nav class="nav-bar">
+            <div class="left">LOGO</div>
+            <div class="center">
+                <form action="/search">
+                    <div class="search-bar">
+                        <div class="glass"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div class="text"><input type="text" name="q" placeholder="Begin your search..."></div>
+                    </div>
+                    <label for="quick-search-submit" class="quick-search-btn">
+                        <input id="quick-search-submit" type="submit" value="" class="hidden">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </label for="quick-search-submit">
+                </form>
+            </div>
+            <div class="right w-full flex">
+                {{ if not .IsAuthenticated }}
+                    <div class="nav-btn login">Login</div>
+                    <div class="nav-btn register">Register</div>
+                {{ else }}
+                    <div class="nav-profile">
+                        <div class="greets">Hi, <span class="username">{{ .Username }}</span> !</div>
+                        <div class="pfp"><img src="assets/img/pfp.png" alt="User profile picture"></div>
+                    </div>
+                {{ end }}
+            </div>
+            <div class="right w-medium flex">
+                <div class="nav-btn search">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                {{ if .IsAuthenticated }}
+                    <div class="nav-btn profile"><img src="assets/img/pfp.png" alt=""></div>
+                    <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
+                {{ end }}
+            </div>
+        </nav>
+    </header>
+    {{ if not .IsAuthenticated }}
+    <aside>
+        <div class="hide"></div>
+        {{ template "register"}}
+        {{ template "login"}}
+    </aside>
+    {{ end }}
+{{ end }}

@@ -12,11 +12,13 @@
     <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
-    <title>Forum!</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>{{ .PageTitle }} | Trainers' Corner</title>
 </head>
 
-<body style="display:flex; align-items: center; justify-content: center;">
-    Cannot log user in: wrong credentials
+<body>
+    {{ template "body" . }}
+    <script src="assets/js/credentials.js"></script>
 </body>
 
 </html>

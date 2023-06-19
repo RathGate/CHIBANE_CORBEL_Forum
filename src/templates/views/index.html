@@ -1,29 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/main.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/65cde144bd.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico">
-    <title>Home | Trainers' Corner</title>
-</head>
-<body>
-
-{{template "navbar"}}
-
-{{template "register"}}
-
-{{template "login"}}
-
-
-{{template "categories" .}}
-
-    <script src="/assets/js/script.js"></script>
-</body>
-</html>
+{{ define "body" }}
+{{ template "header" .User }}
+<main>
+    <section class="topics">
+        {{ template "column_nav" . }}
+        <div class="center-part main-content">
+            Bonjour !!
+        </div>
+        {{ template "column_ads" .User }}
+    </section>
+</main>
+{{ template "footer" }}
+<script src="assets/js/topics.js"></script>
+{{ end }}
