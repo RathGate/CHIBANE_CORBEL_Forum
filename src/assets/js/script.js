@@ -9,14 +9,22 @@ mobileMenuBtn.addEventListener("click", function() {
     mobileMenu.classList.add("visible")
     document.body.classList.add("no-scroll")
 })
-profileMenuBtn.addEventListener("click", function () {
-    profileMenu.classList.toggle("visible")
+mobileMenu.querySelectorAll(".btn").forEach(element => { 
+    element.addEventListener("click", function () {
+        mobileMenu.classList.remove("visible")
+        document.body.classList.remove("no-scroll")
+    })
 })
-profileMenuBtnMobile.addEventListener("click", function () {
-    profileMenu.classList.toggle("visible")
-})
-CloseWhenOutside(profileMenu, profileMenuBtn, profileMenuBtnMobile)
-
+if (profileMenuBtn) {
+    
+    profileMenuBtn.addEventListener("click", function () {
+        profileMenu.classList.toggle("visible")
+    })
+    profileMenuBtnMobile.addEventListener("click", function () {
+        profileMenu.classList.toggle("visible")
+    })
+    CloseWhenOutside(profileMenu, profileMenuBtn, profileMenuBtnMobile)
+}
 // Removes the visible attribute when resizing over the max size of 
 // the burger menu.
 window.addEventListener("resize", function() {
