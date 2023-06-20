@@ -197,3 +197,25 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
+
+func privacyHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
+	tData.PageTitle = "Privacy Policy"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/header.html", "templates/views/privacy.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
+}
+
+func tosHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
+	tData.PageTitle = "Forum Guidelines"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/header.html", "templates/views/tos.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
+}

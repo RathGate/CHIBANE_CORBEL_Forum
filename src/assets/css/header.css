@@ -21,7 +21,7 @@ header {
     align-items: center;
 }
 
-.nav-bar form {
+.nav-bar .form {
     display: flex;
     gap: 5px;
     justify-content: center;

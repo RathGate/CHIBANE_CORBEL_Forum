@@ -3,16 +3,16 @@
         <nav class="nav-bar">
             <div class="left">LOGO</div>
             <div class="center">
-                <form action="/search">
+                <div class="form">
                     <div class="search-bar">
                         <div class="glass"><i class="fa-solid fa-magnifying-glass"></i></div>
-                        <div class="text"><input type="text" name="q" placeholder="Begin your search..."></div>
+                        <div class="text"><input type="text" name="q" placeholder="Only a placeholder for now !"></div>
                     </div>
                     <label for="quick-search-submit" class="quick-search-btn">
-                        <input id="quick-search-submit" type="submit" value="" class="hidden">
+                        
                         <i class="fa-solid fa-chevron-right"></i>
                     </label for="quick-search-submit">
-                </form>
+                </div>
             </div>
             <div class="right w-full flex">
                 {{ if not .IsAuthenticated }}

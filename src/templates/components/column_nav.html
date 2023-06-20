@@ -1,7 +1,7 @@
 {{ define "column_nav" }}
 
 <aside class="left-part side-nav">
-    <div class="btn-new-topic">+ New discussion</div>
+    {{ if and (ne .PageTitle "Privacy Policy") (ne .PageTitle "Forum Guidelines") }} <div class="btn-new-topic">+ New discussion</div> {{ end }}
     <div class="side-menu">
         <div class="title">
             <div class="menu-icon">
@@ -14,11 +14,11 @@
                 <div class="icon"><span class="material-symbols-outlined">home</span></div>
                 <span class="name">Home</span>
             </div></a>
-            <a href="/search"><div class="menu-option" {{ if eq .PageTitle "Search" }}active{{end}}>
+            <a><div class="menu-option {{ if eq .PageTitle "Search" }}active{{end}}">
                 <div class="icon"><span class="material-symbols-outlined">travel_explore</span></div>
                 <span class="name">Search</span>
             </div></a>
-            <a><div class="menu-option" {{ if eq .PageTitle "My Topics" }}active{{end}}>
+            <a><div class="menu-option {{ if eq .PageTitle "My Topics" }}active{{end}}">
                 <div class="icon"><span class="material-symbols-outlined">topic</span></div>
                 <span class="name">My Topics</span>
             </div></a>
