@@ -1,12 +1,58 @@
-# FORUM 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+# Trainers' Corner (Forum)
 
-## ABOUT
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+![Topics page of the website](https://cdn.discordapp.com/attachments/758039564387352657/1120808938733047828/image.png)
 
-## TECHNICAL SPECIFICATIONS
--
--
--
+## About
 
-## HOW TO USE
+Project submitted for a full-stack course, realised by [Eva Chibane ](https://github.com/evzs) and [Marianne Corbel](https://github.com/RathGate). This project is intended to be a forum about the Pokémon video-games series and the subjects that revolve around it. Users can log in, create topics, post answers and react to other users' posts !
+
+Technical documentation: [HERE](https://github.com/RathGate/CHIBANE_CORBEL_Forum/tree/main/docs) ( /src/documentation )
+
+How we organised our work: [HERE (Asana)](https://app.asana.com/0/1204809319000403/timeline) 
+
+## Technical Specifications
+
+ - Back-end: Golang 
+ - Front-end: HTML, CSS, JS (with Axios library).
+ - DMBS: MySQL (used with WAMP Server)
+
+**COMPATIBILITY:** The website has been entirely tested on the latest versions of Chrome, Firefox and Edge. It should also appear responsive on Chrome, Safari and Firefox mobile browsers !
+
+## How to use the program
+
+For now, the website has not been hosted anywhere, though we might find a way to host it in the future. In order to visit it on your computer, you must run both the database server and the golang server concurrently.
+
+To clone the repository:
+
+    git clone https://github.com/RathGate/CHIBANE_CORBEL_Forum
+
+### Database Server
+
+The given database script has been tested both on XAMPP (MariaDB) and XAMP (MySQL). However, you might encounter some compatibility issues if you choose to use another DBMS than the one that generated the script (MySQL). You will find the said script in `docs/script`.
+
+For now, database access values have been hardcoded into the back-end code. If you happen to have settings different than the plain default-not-secure-root-whatever-values, you can change them in `src/main.go`:
+
+      
+      var DATABASE_ACCESS = utils.DB_Access{
+        User:  "root",
+        Password:  "",
+        Port:  3306,
+        Type:  "sql",
+        DBName:  "forum",
+      }
+
+### Back-end Server
+
+Launch a terminal in the `/src` folder:
+
+    go run .
+
+**NOTE:** `go run main.go` will not work properly as the `package main` is divided into three separate files and not just contained in `main.go`.
+
+The website should be available on `localhost:8080`. In case of port collision, look for this line of code at the bottom of `/src/main.go` :
+
+    preferredPort := ":8080"
+
+Change the numerical value after the colon with any other port number.
+
+Enjoy ♫
