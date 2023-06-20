@@ -64,11 +64,12 @@ type TempUser struct {
 	Role     sql.NullString
 }
 type BaseUser struct {
-	ID        int    `json:"id"`
-	Username  string `json:"username"`
-	RoleID    int    `json:"role_id"`
-	Role      string `json:"role"`
-	IsDeleted bool   `json:"is_deleted"`
+	IsAuthenticated bool
+	ID              int    `json:"id"`
+	Username        string `json:"username"`
+	RoleID          int    `json:"role_id"`
+	Role            string `json:"role"`
+	IsDeleted       bool   `json:"is_deleted"`
 }
 
 func (temp *TempUser) GetValidValues() (user BaseUser) {
@@ -285,6 +286,7 @@ func QueryTopicsData(t TopicFilters) string {
 	if t.ApplyLimit {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
+
 	return strings.Join(stringBuilder, "\n")
 }
 

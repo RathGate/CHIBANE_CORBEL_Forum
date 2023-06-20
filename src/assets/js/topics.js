@@ -14,7 +14,7 @@ allFilterInputs.forEach(element => {
 })
 
 function addPaginationListeners() {
-    let pageInputs = document.querySelectorAll('input[name="category"]')
+    let pageInputs = document.querySelectorAll('input[name="page"]')
     pageInputs.forEach(element => {
         element.addEventListener("change", function () {
             console.log(element, "changed! Refreshing")
@@ -30,7 +30,7 @@ function refreshTopics(pageIncrementation = 0) {
             timePeriod: dateSelect.value,
             order: orderSelect.value,
             page: getInputValueByName("page"),
-            category: getInputValueByName("category")
+            category: retrieveCategory()
         }, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -121,3 +121,12 @@ function checkURL(url = window.location.href, replaceURL=true) {
 }
 
 checkURL()
+
+function retrieveCategory() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let categoryParam = urlParams.get('category');
+    if (!categoryParam) {
+        categoryParam = 0
+    }
+    return categoryParam
+}

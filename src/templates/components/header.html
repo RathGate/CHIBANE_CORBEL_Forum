@@ -31,8 +31,37 @@
                 </div>
                 {{ if .IsAuthenticated }}
                     <div class="nav-btn profile"><img src="/assets/img/pfp.png" alt=""></div>
-                    <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
+                    
                 {{ end }}
+                <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
+            </div>
+            <div class="smol-profile">
+                <div class="user">
+                    <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                    <div class="info">
+                        <div class="username">{{ .Username }}</div>
+                        <div class="badge-role user-role">
+                            <img src="/assets/img/icons/role_{{ .RoleID}}.png" alt="">
+                            <span>{{ .Role}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="sep">
+                    <div></div>
+                    <div class="icon"><img src="/assets/img/icons/bullbasaur.png" alt=""></div>
+                </div>
+                <div class="option-ctn options-profile">
+                    <a href=""><div class="option"><span class="icon material-symbols-outlined">person</span>My Profile</div></a>
+                    <a href=""><div class="option"><span class="icon material-symbols-outlined">edit_square</span>Edit Profile</div></a>
+                </div>
+                <div class="sep">
+                    <div></div>
+                    <div class="icon"><img src="/assets/img/icons/bullbasaur.png" alt=""></div>
+                </div>
+                <a href="/logout"><div class="logout">
+                    <div class="option"><span class="icon material-symbols-outlined">logout</span> <span>LOG OUT</span>
+                        </div>
+                </div></a>
             </div>
         </nav>
     </header>
@@ -42,5 +71,6 @@
         {{ template "register"}}
         {{ template "login"}}
     </aside>
+    
     {{ end }}
 {{ end }}

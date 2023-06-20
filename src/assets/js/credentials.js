@@ -216,11 +216,11 @@ function changeInnerText(divID, content) {
 if (registerForm && loginForm) {
     registerFormSubmitListener(registerForm)
     loginFormSubmitListener(loginForm)
+    
     handleToggle(registerBtn, registerCtn);
     handleToggle(loginBtn, loginCtn);
-
     handleClose(registerCtn);
-    handleClose(registerCtn);
+    handleClose(loginCtn);
 
     handleOutsideClick([loginCtn, registerCtn]);
 }

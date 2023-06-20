@@ -29,13 +29,11 @@ func QueryTopTrainers(userID int) (result [6]TopTrainer, err error) {
 	}
 	defer rows.Close()
 
-	var fullResult []TopTrainer
 	i := 1
 	for rows.Next() {
 		var temp TopTrainer
 		err = rows.Scan(&temp.Username, &temp.UserID, &temp.PostCount)
 		temp.Position = i
-		fullResult = append(fullResult, temp)
 		if i <= 5 {
 			result[i-1] = temp
 		}

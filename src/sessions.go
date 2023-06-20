@@ -55,17 +55,17 @@ func getSession(r *http.Request) (tData data.TemplateData) {
 	}
 	defer db.Close()
 
-	var tempUsername string
-	err = db.QueryRow(`SELECT username FROM users WHERE id = ?`, session.Values["id"].(int)).Scan(&tempUsername)
-	if err != nil || tempUsername == "" {
+	var tempUser data.TempUser
+	err = db.QueryRow(`SELECT u.id, username, u.role_id, r.name FROM users AS u 
+	JOIN roles AS r ON u.role_id = r.id 
+    WHERE u.id = ?`, session.Values["id"].(int)).Scan(&tempUser.ID, &tempUser.Username, &tempUser.RoleID, &tempUser.Role)
+
+	if checkUser := tempUser.GetValidValues(); err != nil || checkUser.IsDeleted {
 		fmt.Println(err)
 		return tData
-	}
-
-	tData.User = data.TemplateUser{
-		ID:              session.Values["id"].(int),
-		Username:        tempUsername,
-		IsAuthenticated: true,
+	} else {
+		tData.User = checkUser
+		tData.User.IsAuthenticated = true
 	}
 
 	return tData

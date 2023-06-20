@@ -44,7 +44,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData.Categories, _ = data.GetCategories()
 	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
 
@@ -90,19 +90,17 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	temp, err := data.GetTopicListData(filters)
 	if err != nil {
-		fmt.Println("Error in handlers.go")
 		log.Fatal(err)
 	}
 	tData.Topics = temp.Topics
 	tData.Filters = temp.Filters
-
 	if r.Method == "POST" {
 		r.ParseForm()
 		tmpl := generateTemplate("", []string{"templates/components/topic_list.html", "templates/components/pagination.html"})
 		tmpl.ExecuteTemplate(w, "topic_list", tData)
 		return
 	}
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
 
@@ -164,6 +162,6 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
