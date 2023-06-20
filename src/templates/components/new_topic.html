@@ -1,0 +1,30 @@
+{{define "new_topic"}}
+    <div class="pop-up-container" id="pop-up-container">
+    <form method="POST" action="/new-topic" class="pop-up-form">
+        <div class="pop-up-close-btn">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+        <div class="new-topic-main">
+        <div class="new-topic-left">  <div class="category-select"><label for="category" class="cat-select-title">PICK A CATEGORY</label>
+            <div class="select-wrap select-alt">
+                <select name="category" id="category">
+                    {{ range .Categories }}
+                        <option value="{{ .ID }}">{{ .Name }}</option>
+                    {{ end }}
+                </select>
+                <div class="select-icon"><i class="fa-solid fa-chevron-down"></i></div></div>
+            </div><div><button type="submit" class="pop-up-submit-btn">Create Topic</button></div></div>
+<div class="cut-vertical-line"></div>
+<div class="new-topic-right">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" maxlength="120" required>
+    <!-- TODO: Check maxlength on backend -->
+
+        <label for="content"></label>
+        <textarea name="content" id="content" rows="5"  placeholder="Write your message here" required></textarea>
+</div>
+    </div>
+
+    </form>
+        </div>
+{{end}}

@@ -6,6 +6,7 @@
         {{ template "column_nav" . }}
         {{ $topic := .Topic }} {{ $firstPost := .Topic.FirstPost }}
         <div class="center-part main-content">
+            {{template "new_topic" .}}
             <div class="base-topic-ctn">
                 <div class="bt-details">
                     <div class="left">

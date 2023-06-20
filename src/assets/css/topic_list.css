@@ -229,6 +229,10 @@ select {
     -webkit-appearance: none;
 }
 
+option {
+    background-color: rgb(36, 34, 41);
+}
+
 /* For IE10 */
 select::-ms-expand {
     display: none;
