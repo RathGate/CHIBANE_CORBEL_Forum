@@ -1,16 +1,69 @@
 @import url(main.css);
 
-body {
+body, html {
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    overflow: hidden;
 }
 .content {
-
+    position: absolute;
+    left: 50%;
+    z-index: 3;
+    padding-bottom: 100px;
+}
+.duck {
+    position: absolute;
+    left: 50px;
+    bottom: 0;
+    transform: translateY(35%);
+    height: 800px;
+}
+img {
+    display: block;
+    max-height: 100%;
+    height: 100%;
+    max-width: none;
 }
 .f0f {
     font-size: 120px;
     color: #e63c3c;
     letter-spacing: 5px;
+}
+@media screen and (max-width: 1150px) {
+    .duck {
+        transform: translateY(35%);
+    }
+}
+@media screen and (max-width: 950px) {
+    .duck {
+        position: absolute;
+        left: 50px;
+        bottom: 0;
+        transform: translateY(40%);
+    }     
+    .content {
+        left: 40%;
+    }  
+}
+
+@media screen and (max-width: 650px) {
+    .duck {
+        max-height: 650px;
+    }  
+    .content {
+        position: static;
+    }
+}
+@media screen and (max-width: 500px) {
+    .duck {
+        max-height: 550px;
+    }
+    .f0f{
+        font-size: 80px;
+    }
+    .no-page {
+        font-size: 14px;
+    }
 }
