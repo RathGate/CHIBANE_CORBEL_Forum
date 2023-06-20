@@ -88,7 +88,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	filters := data.RetrieveFilters(r)
 	filters.UserID = tData.User.ID
 
-	temp, err := data.GetTopicListData(filters)
+	temp, err := data.TempQuery(filters)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,7 +101,8 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
-	tmpl.Execute(w, tData)
+	err = tmpl.Execute(w, tData)
+	fmt.Println(err)
 }
 
 /* loginHandler handles the login form and redirects to the profile page */
