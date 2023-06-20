@@ -1,0 +1,85 @@
+{{ define "body" }}
+{{ template "header" .User }}
+{{ template "mobile-menus" . }}
+<main>
+    <section class="topics">
+        {{ template "column_nav" . }}
+        {{ $topic := .Topic }} {{ $firstPost := .Topic.FirstPost }}
+        <div class="center-part main-content privacy">
+            <h1>Trainers' Corner - Forum Guidelines</h1>
+
+            <div class="end">
+                <p>Welcome to Trainers' Corner, the online community dedicated to Pokémon video games! To ensure a positive and enjoyable
+                experience for all members, we have established the following guidelines. By participating in this forum, you agree to
+                adhere to these rules:</p>
+            </div>
+                
+
+            <div class="part">
+                <h2>Respectful Communication:</h2>
+                <p>Treat fellow trainers with kindness, respect, and courtesy. Avoid offensive language, personal attacks, or any form of
+                discrimination.</p>
+                <p>Engage in constructive discussions and avoid excessive arguments or flame wars. Disagreements are allowed, but keep the
+                conversation civil.</p>
+            </div>
+            <div class="part">
+                <h2>Relevant Content:</h2>
+                <p>Focus discussions on Pokémon video games, including the main series, spin-offs, gameplay strategies, news, and updates.
+</p>
+                <p>Avoid unrelated topics or excessive promotion of external websites, products, or services.
+</p>
+            </div>
+            <div class="part">
+                <h2>Spoiler Policy:
+</h2>
+                <p>When discussing new Pokémon games or storylines, use spoiler tags to prevent spoiling the experience for others who may
+                not have played or completed the game yet.
+</p>
+                <p>Clearly label any posts containing spoilers and keep spoiler-related discussions confined to specific threads.
+</p>
+</div>
+            <div class="part">
+                <h2>Intellectual Property and Legality:
+</h2>
+                <p>Respect copyright laws and do not share or request illegal copies of Pokémon games, ROMs, or any unauthorized content.
+</p>
+                <p>Give credit to original creators when sharing fan art, fan fiction, or any other user-generated content.
+</p>
+            </div>
+            <div class="part">
+                <h2>Spam and Advertising:
+</h2>
+                <p>Refrain from spamming the forum with repetitive or irrelevant posts. Keep discussions meaningful and on-topic.
+</p>
+<p>Do not use the forum solely for advertising purposes, including promoting external products, services, or websites
+without prior permission.
+</p>
+            </div>
+            <div class="part">
+                <h2>Personal Information:
+</h2>
+                <p>Protect your privacy and refrain from sharing personal contact information or any sensitive data on the forum. Be
+                cautious while interacting with other members.
+</p>
+            </div>
+            <div class="part">
+                <h2>Moderation and Enforcement:
+</h2>
+                <p>Follow the instructions of forum moderators. They are here to ensure a safe and enjoyable environment for everyone.</p>
+                <p>Report any posts or users violating the guidelines to the moderators for appropriate action.
+</p>
+<p>Remember, Trainers' Corner is a place to connect with fellow Pokémon enthusiasts and share your love for the games.
+Let's foster a welcoming and inclusive community where trainers can learn, discuss, and have fun together!</p>
+            </div>
+            <div class="end">
+                <p>By using this forum, you acknowledge and agree to abide by these guidelines. Enjoy your time at Trainers' Corner, and
+                happy gaming!</p>
+
+                <p>Evzs & RathGate, Trainers' Corner team</p>
+            </div>
+        </div>
+        {{ template "column_ads" . }}
+    </section>
+</main>
+{{ template "footer" }}
+{{ end }}

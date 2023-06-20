@@ -1,7 +1,7 @@
 {{ define "column_nav" }}
 
 <aside class="left-part side-nav">
-    {{ if ne .PageTitle "Privacy Policy" }} <div class="btn-new-topic">+ New discussion</div> {{ end }}
+    {{ if and (ne .PageTitle "Privacy Policy") (ne .PageTitle "Forum Guidelines") }} <div class="btn-new-topic">+ New discussion</div> {{ end }}
     <div class="side-menu">
         <div class="title">
             <div class="menu-icon">

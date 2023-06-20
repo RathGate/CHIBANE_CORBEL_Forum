@@ -208,3 +208,14 @@ func privacyHandler(w http.ResponseWriter, r *http.Request) {
 	err := tmpl.Execute(w, tData)
 	fmt.Println(err)
 }
+
+func tosHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
+	tData.PageTitle = "Forum Guidelines"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/header.html", "templates/views/tos.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
+}
