@@ -99,6 +99,57 @@ func QuerySingleTopicData(dba utils.DB_Access, topicID int, userID int) (data Te
 	return data, nil
 }
 
+func QueryNewTopic(categoryID int, title string, userID int, content string, tagID int) (int64, error) {
+	var topicID int64
+	var postID int64
+
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	if err != nil {
+		return 0, err
+	}
+	defer db.Close()
+
+	// Inserts new topic into topics table
+	result, err := db.Exec("INSERT INTO topics (category_id, title) VALUES (?, ?)", categoryID, title)
+	if err != nil {
+		return 0, err
+	}
+
+	// Gets the ID of the newly created topic
+	topicID, err = result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	// Inserts new post into posts table
+	result, err = db.Exec("INSERT INTO posts (topic_id, user_id, content) VALUES (?, ?, ?)", topicID, userID, content)
+	if err != nil {
+		return 0, err
+	}
+
+	// Gets the ID of the newly created post
+	postID, err = result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	// Links the topic and its first post
+	_, err = db.Exec("INSERT INTO topic_first_posts (topic_id, post_id) VALUES (?, ?)", topicID, postID)
+	if err != nil {
+		return 0, err
+	}
+
+	// Add tags to the topic
+	//if tagID > 0 {
+	//	_, err = db.Exec("INSERT INTO topic_tags (topic_id, tag_id) VALUES (?, ?)", topicID, tagID)
+	//	if err != nil {
+	//		return 0, err
+	//	}
+	//}
+
+	return topicID, nil
+}
+
 func PrettyPrint(i interface{}) string {
 	s, _ := json.MarshalIndent(i, "", "   ")
 	return string(s)

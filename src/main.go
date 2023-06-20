@@ -33,6 +33,7 @@ func main() {
 	r.HandleFunc("/admin", adminHandler)
 	r.HandleFunc("/topic/{id}", topicHandler)
 	r.HandleFunc("/topic/new", newTopicHandler)
+	r.HandleFunc("/new-topic", newTopicHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:

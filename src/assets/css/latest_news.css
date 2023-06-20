@@ -1,0 +1,120 @@
+.slick-slider {
+    max-width: 300px;
+    border-radius: 16px;
+    min-height: 300px;
+}
+
+.slick-slide {
+    display: flex;
+}
+
+.news-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.news-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.news-title {
+    font-size: 12px;
+    top: 0;
+    position: absolute;
+    max-width: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    border-bottom-right-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 2px 4px;
+}
+
+.news-date {
+    bottom: 20px;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    font-size: 8px;
+    right: 0;
+    border-bottom-left-radius: 4px;
+    border-top-left-radius: 4px;
+    padding: 2px 4px;
+}
+
+
+.slick-dots li {
+    display: none;
+}
+
+
+.slick-prev, .slick-next {
+    position: absolute;
+    bottom: 22%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--color-fg);
+    background: var(--purple-gradient);
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 8px;
+    padding: 4px 8px;
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.slick-prev {
+    left: 35%;
+}
+
+.slick-next {
+    right: 35%;
+}
+
+.latest-news {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    width: fit-content;
+    margin: 25px auto;
+}
+
+.homepage-content-title {
+    display: flex;
+    align-items: center;
+    font-family: 'Merriweather Sans', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    padding: 16px;
+    border-radius: 16px;
+    background-color:  rgba(255, 255, 255, .03);
+    box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+}
+
+.title-pic {
+    width: 64px;
+    padding: 8px;
+}
+
+.cut {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-fg);
+    margin: auto;
+}

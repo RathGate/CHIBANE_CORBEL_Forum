@@ -181,7 +181,9 @@ func addUserToDatabase(dba utils.DB_Access, username, password, email string, ro
 	defer stmt.Close()
 
 	var result sql.Result
+
 	result, err = stmt.Exec(username, hashPassword, email, role_id)
+
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}
