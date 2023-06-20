@@ -28,7 +28,11 @@ func main() {
 	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/logout", logoutHandler)
 	r.HandleFunc("/topics", topicsHandler)
+	r.HandleFunc("/user/{username}", userHandler)
+	r.HandleFunc("/profile/edit", editProfileHandler)
+	r.HandleFunc("/admin", adminHandler)
 	r.HandleFunc("/topic/{id}", topicHandler)
+	r.HandleFunc("/topic/new", newTopicHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:
