@@ -62,8 +62,8 @@ function loginFormSubmitListener(loginFormDiv) {
     loginFormDiv.addEventListener("submit", function (e) {
         e.preventDefault()
         axios.post('http://localhost:8080/login', {
-            username: loginFormDiv.querySelector(".username.input").value,
-            password: loginFormDiv.querySelector(".password.input").value,
+            username: loginForm.querySelector(".username.input").value,
+            password: loginForm.querySelector(".password.input").value,
         }, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
