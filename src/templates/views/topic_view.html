@@ -1,0 +1,122 @@
+{{ define "body" }}
+{{ template "header" .User }}
+<main>
+    <section class="topics">
+        {{ template "column_nav" . }}
+        {{ $topic := .Topic }} {{ $firstPost := .Topic.FirstPost }}
+        <div class="center-part main-content">
+            <div class="base-topic-ctn">
+                <div class="bt-details">
+                    <div class="left">
+                        <div class="icon"><img src="/assets/img/icons/psyduck.png" alt=""></div>
+                        Posted in {{ $topic.Category }} {{ getTimeSincePosted $firstPost.Timeline.CreationDate.Time}}</div>
+                    <div class="right">
+                        {{ $permissions := getAllowedRoles $topic.Permissions }}
+                        {{ range $permissions.write }}
+                        <div class="role"><img src="/assets/img/icons/role_{{.}}.png" alt=""></div>
+                        {{ end }}
+                    </div>
+                </div>
+                <h1 class="bt-title">{{$topic.Title}}</h1>
+                <div class="bt-item">
+                    <div class="bt-header">
+                        <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                        <div class="profile">
+                            <div class="username">
+                                <span>{{$firstPost.User.Username}}</span>
+                                <div class="user-role role-{{ $firstPost.User.RoleID }}">
+                                    <img src="/assets/img/icons/role_{{ $firstPost.User.RoleID}}.png" alt="">
+                                    <span>{{ $firstPost.User.Role}}</span>
+                                </div>
+                            </div>
+                            <div class="time">
+                                <span class="posted">Posted {{ getTimeSincePosted $firstPost.Timeline.CreationDate.Time}}</span>
+                                {{ if $firstPost.Timeline.ModificationDate.Valid }}
+                                <span class="modified">(Last modified {{ getTimeSincePosted $firstPost.Timeline.ModificationDate.Time}})</span>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-body">
+                        {{ $firstPost.Content }}
+                    </div>
+                    <div class="bt-footer">
+                        <div class="score-ctn">
+                            <div class="icon"><img src="/assets/img/icons/pokecoin.png" alt=""></div>
+                            <div class="ti-score 
+                            {{ if gt $firstPost.Reactions.Score 0}}positive
+                            {{ else if lt $firstPost.Reactions.Score 0}}negative{{end}}
+                            {{ if $firstPost.CurrentUserReaction.Valid}}voted{{end}}">
+                            
+                            <i class="fa-solid fa-arrow-up"></i>
+                            <span class="score">{{ $firstPost.Reactions.Score }}</span>
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                {{ if $topic.Tags }}
+                    <div class="bt-tags">
+                        <span>TAGS: </span>
+                        {{ range $topic.Tags }}
+                        <div class="tag-ctn">
+                            <div class="tag">{{ . }}</div>
+                        </div>
+                        {{ end}}
+                    </div>
+                {{ else }}
+                    <div class="gap"></div>
+                {{ end }}
+            </div>
+            <div class="answers-count">
+                <span>{{$topic.AnswerCount }} Answer(s)</span></div>
+            <div class="answers-ctn">
+                {{ range $topic.Answers }}
+                <div class="bt-item">
+                    <div class="bt-header">
+                        <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                        <div class="profile">
+                            <div class="username">
+                                <span>{{.User.Username}}</span>
+                                <div class="user-role role-{{ .User.RoleID }}">
+                                    <img src="/assets/img/icons/role_{{.User.RoleID}}.png" alt="">
+                                    <span>{{ .User.Role}}</span>
+                                </div>
+                            </div>
+                            <div class="time">
+                                <span class="posted">Posted {{ getTimeSincePosted .Timeline.CreationDate.Time}}</span>
+                                {{ if.Timeline.ModificationDate.Valid }}
+                                <span class="modified">(Last modified {{ getTimeSincePosted .Timeline.ModificationDate.Time}})</span>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bt-body">
+                        {{ .Content }}
+                    </div>
+                    <div class="bt-footer">
+                        <div class="score-ctn">
+                            <div class="icon"><img src="/assets/img/icons/pokecoin.png" alt=""></div>
+                            <div class="ti-score 
+                                            {{ if gt .Reactions.Score 0}}positive
+                                            {{ else if lt .Reactions.Score 0}}negative{{end}}
+                                            {{ if .CurrentUserReaction.Valid}}voted{{end}}">
+                
+                                <i class="fa-solid fa-arrow-up"></i>
+                                <span class="score">{{ .Reactions.Score }}</span>
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{ end}}
+            </div>
+            <div class="new-answer">
+                <textarea name="" id="" cols="30" rows="10"></textarea>
+            </div>
+        </div>
+        {{ template "column_ads" . }}
+    </section>
+</main>
+{{ template "footer" }}
+{{ end }}

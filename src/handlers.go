@@ -9,6 +9,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func generateTemplate(templateName string, filepaths []string) *template.Template {
@@ -16,6 +19,7 @@ func generateTemplate(templateName string, filepaths []string) *template.Templat
 		"getTimeSincePosted":  utils.GetTimeSincePosted,
 		"getPagesArr":         utils.GetPagesArr,
 		"GetPaginationValues": utils.GetPaginationValues,
+		"getAllowedRoles":     data.GetAllowedRoles,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -37,12 +41,8 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Home"
-
-	categories, err := data.GetCategories()
-	if err != nil {
-		log.Fatal(err)
-	}
-	tData.Categories = categories
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
 	tmpl.Execute(w, tData)
@@ -82,14 +82,8 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Topics"
-
-	categories, err := data.GetCategories()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	tData.Categories = categories
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
 	filters := data.RetrieveFilters(r)
 	filters.UserID = tData.User.ID
@@ -138,7 +132,38 @@ func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/topics", http.StatusSeeOther)
 }
 
-func testHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/test.html"))
-	tmpl.Execute(w, nil)
+func topicHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "Topic"
+	id := mux.Vars(r)["id"]
+
+	// Checks if [id] parameter is a valid parameter
+	topicID, err := strconv.Atoi(id)
+	if err != nil {
+		notFoundHandler(w, r)
+		return
+	}
+	// Checks if a topic with this id exists
+	if exists, err := data.TopicExists(topicID); !exists || err != nil {
+		notFoundHandler(w, r)
+	}
+
+	// Reload template if user clicks on another page
+	if r.Method == "POST" {
+		// TODO
+		fmt.Println("Soon")
+		// Return
+	}
+
+	// Loads categories for left nav
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
+
+	tData.Topic, err = data.QuerySingleTopicData(topicID, tData.User.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl.Execute(w, tData)
 }
