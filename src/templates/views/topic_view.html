@@ -1,6 +1,6 @@
 {{ define "body" }}
 {{ template "header" .User }}
-<aside class="mobile-menu"></aside>
+{{ template "mobile-menus" . }}
 <main>
     <section class="topics">
         {{ template "column_nav" . }}
@@ -25,7 +25,7 @@
                         <div class="profile">
                             <div class="username">
                                 <span>{{$firstPost.User.Username}}</span>
-                                <div class="user-role role-{{ $firstPost.User.RoleID }}">
+                                <div class="badge-role user-role role-{{ $firstPost.User.RoleID }}">
                                     <img src="/assets/img/icons/role_{{ $firstPost.User.RoleID}}.png" alt="">
                                     <span>{{ $firstPost.User.Role}}</span>
                                 </div>
@@ -79,7 +79,7 @@
                         <div class="profile">
                             <div class="username">
                                 <span>{{.User.Username}}</span>
-                                <div class="user-role role-{{ .User.RoleID }}">
+                                <div class="badge-role user-role role-{{ .User.RoleID }}">
                                     <img src="/assets/img/icons/role_{{.User.RoleID}}.png" alt="">
                                     <span>{{ .User.Role}}</span>
                                 </div>

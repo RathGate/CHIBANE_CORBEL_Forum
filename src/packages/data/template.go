@@ -2,7 +2,7 @@ package data
 
 type TemplateData struct {
 	PageTitle  string
-	User       TemplateUser
+	User       BaseUser
 	Topics     []Topic
 	Filters    TopicFilters
 	Categories []Category

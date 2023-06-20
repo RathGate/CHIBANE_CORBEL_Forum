@@ -184,18 +184,18 @@ h1.bt-title {
     align-items: center;
     gap: 10px;
 }
-.bt-header .user-role {
+.badge-role.user-role {
     position: relative;
     font-size: 11px;
     margin-left: 15px;
 }
-.bt-header .user-role span {
+.badge-role.user-role span {
     padding: 0 5px 0 8px;
     border: 1px solid transparent;
     border-radius: 5px;
     border-left: none;
 }
-.bt-header .user-role img {
+.badge-role.user-role img {
     max-height: 22px;
     position: absolute;
     left: -14px;

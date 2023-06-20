@@ -1,6 +1,6 @@
 {{ define "body" }}
 {{ template "header" .User }}
-<aside class="mobile-menu"></aside>
+{{ template "mobile-menus" . }}
 <main>
     <section class="topics">
         {{ template "column_nav" . }}
