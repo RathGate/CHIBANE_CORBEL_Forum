@@ -180,7 +180,9 @@ func addUserToDatabase(username, password, email string, role_id int) (status in
 	defer stmt.Close()
 
 	var result sql.Result
+
 	result, err = stmt.Exec(username, hashPassword, email, role_id)
+
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}

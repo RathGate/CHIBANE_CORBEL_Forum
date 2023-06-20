@@ -44,7 +44,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData.Categories, _ = data.GetCategories()
 	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
+
 	tmpl.Execute(w, tData)
 }
 
@@ -100,9 +101,10 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		tmpl.ExecuteTemplate(w, "topic_list", tData)
 		return
 	}
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
-	err = tmpl.Execute(w, tData)
-	fmt.Println(err)
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl.Execute(w, tData)
+
 }
 
 /* loginHandler handles the login form and redirects to the profile page */
@@ -163,6 +165,46 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl.Execute(w, tData)
+}
+
+func newTopicHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "New Topic"
+
+	if r.Method == "POST" {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Extracts form values
+		categoryID, err := strconv.Atoi(r.FormValue("category"))
+		if err != nil {
+			http.Error(w, "Invalid category ID", http.StatusBadRequest)
+			return
+		}
+		title := r.FormValue("title")
+		content := r.FormValue("content")
+		userID := tData.User.ID
+
+		// Creates the new topic in the database
+		topicID, err := data.QueryNewTopic(categoryID, title, userID, content, 0)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Redirects to the newly created topic
+		http.Redirect(w, r, "/topic/"+strconv.FormatInt(topicID, 10), http.StatusSeeOther)
+		return
+	}
+
+	// Loads categories for select input
+	tData.Categories, _ = data.GetCategories()
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/new_topic.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
 	tmpl.Execute(w, tData)
 }

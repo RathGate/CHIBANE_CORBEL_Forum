@@ -60,7 +60,8 @@ function loginFormSubmitListener(loginFormDiv) {
     if (!loginFormDiv) {
         return
     }
-    loginForm.addEventListener("submit", function (e) {
+
+    loginFormDiv.addEventListener("submit", function (e) {
         e.preventDefault()
         axios.post('http://localhost:8080/login', {
             username: loginForm.querySelector(".username.input").value,
@@ -70,16 +71,16 @@ function loginFormSubmitListener(loginFormDiv) {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         })
-        .then(response => {
-            if (response.data.status == 200) {
-                location.reload()
-            }
-            else if (response.data.fields) {
-                response.data.fields.forEach(element => {
-                    changeInnerText(element.name, element.errorMsg)
-                })
-            }
-        });   
+            .then(response => {
+                if (response.data.status == 200) {
+                    location.reload()
+                }
+                else if (response.data.fields) {
+                    response.data.fields.forEach(element => {
+                        changeInnerText(element.name, element.errorMsg)
+                    })
+                }
+            });
     })
 }
 
@@ -222,8 +223,10 @@ if (registerForm && loginForm) {
     
     handleToggle(registerBtn, registerCtn);
     handleToggle(loginBtn, loginCtn);
+
     handleToggle(loginBtnMobile, loginCtn);
-    handleToggle(registerBtnMobile, registerCtn)
+    handleToggle(registerBtnMobile, registerCtn);
+
     handleClose(registerCtn);
     handleClose(loginCtn);
 

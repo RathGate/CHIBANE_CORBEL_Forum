@@ -1,0 +1,79 @@
+.cat-display-ctn {
+    gap: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: 'Merriweather Sans', sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.categories-card {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 160px;
+    height: 80px;
+    background-color:  rgba(255, 255, 255, .03);
+    border-radius: 16px;
+    padding: 8px;
+    color: white;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    cursor: pointer;
+    transition: all 0.7s ease;
+    /*background-image: url("https://lorempokemon.fakerapi.it/pokemon/200");*/
+    background-image: url('/assets/img/icons/cat_logo_purple.svg');
+    background-position:  right -20px bottom -15px;
+    background-repeat: no-repeat;
+    background-size: 100px;
+    overflow-wrap: break-word;
+}
+
+.category-card:hover {
+    background-color: var(--color-light-purple);
+    background-image: url('/assets/img/icons/cat_logo_white.svg');
+    background-position:  right -20px bottom -60px;
+    background-repeat: no-repeat;
+    background-size: 100px;
+}
+
+
+.category-card-name {
+    width: 150px;
+    /*text-transform: uppercase;*/
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.count {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-lighter-purple);
+}
+
+.category-card:hover .count {
+    color : white;
+}
+
+
+
+.cat-display-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+}

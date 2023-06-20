@@ -6,7 +6,10 @@
 @import url(forms.css);
 @import url(pagination.css);
 @import url(footer.css);
+@import url(cat_display.css);
+@import url(latest_news.css);
 @import url(topic_view.css);
+@import url(new_topic.css);
 
 :root {
     --color-bg: #1d1b22;
