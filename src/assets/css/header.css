@@ -150,7 +150,7 @@ header {
 
 .nav-profile .username {
     font-weight: bold;
-    color: var(--color-lighter-purple);
+    color: #e63c3c;
 }
 
 .nav-bar .right.w-medium .nav-btn:not(.search) {
@@ -206,4 +206,48 @@ header {
 }
 @media screen and (max-width: 350px) {
     
+}
+
+.mobile-menu {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    max-width: 350px;
+    border: 1px solid cyan;
+    padding: 0 25px 10px 20px;
+    top: 0;
+    left: 100%;
+    background-color: var(--color-bg);
+    z-index: 50;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    transition: transform .2s ease;
+}
+.mobile-menu.visible {
+    transform: translateX(-100%);
+}
+
+.mobile-menu .side-menu {
+    overflow: unset;
+}
+
+.mobile-menu .header , .mobile-menu .footer{
+    height: 50px;
+}
+.mobile-menu .kill-me {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+.mobile-menu .footer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.no-scroll {
+    overflow: hidden !important;
 }

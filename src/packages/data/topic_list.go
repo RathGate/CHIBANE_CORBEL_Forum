@@ -285,6 +285,7 @@ func QueryTopicsData(t TopicFilters) string {
 	if t.ApplyLimit {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
+
 	return strings.Join(stringBuilder, "\n")
 }
 

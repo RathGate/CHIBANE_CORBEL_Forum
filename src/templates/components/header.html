@@ -31,8 +31,9 @@
                 </div>
                 {{ if .IsAuthenticated }}
                     <div class="nav-btn profile"><img src="/assets/img/pfp.png" alt=""></div>
-                    <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
+                    
                 {{ end }}
+                <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
             </div>
         </nav>
     </header>
@@ -42,5 +43,6 @@
         {{ template "register"}}
         {{ template "login"}}
     </aside>
+    
     {{ end }}
 {{ end }}
