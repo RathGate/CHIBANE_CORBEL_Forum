@@ -34,6 +34,7 @@ func main() {
 	r.HandleFunc("/topic/{id}", topicHandler)
 	r.HandleFunc("/topic/new", newTopicHandler)
 	r.HandleFunc("/new-topic", newTopicHandler)
+	r.HandleFunc("/privacy_policy", privacyHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	// Launches the server:
