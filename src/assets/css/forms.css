@@ -36,8 +36,8 @@
     padding: 60px 20px 50px;
     backdrop-filter: blur(16px) saturate(180%);
     -webkit-backdrop-filter: blur(16px) saturate(180%);
-    background-color: rgba(17, 25, 40, 0.8);
-    border: solid rgba(34, 50, 82, 0.8) 1px;
+    background-color: #1d1b22c2;
+    border: solid #b369ff70 1px;
     border-radius: 16px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }

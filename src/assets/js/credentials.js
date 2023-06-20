@@ -17,7 +17,9 @@ const registerValues =
     }
 }
 const loginBtn = document.querySelector(".nav-btn.login")
+const loginBtnMobile = document.querySelector(".mobile-menu .nav-btn.login")
 const registerBtn = document.querySelector(".nav-btn.register")
+const registerBtnMobile = document.querySelector(".mobile-menu .nav-btn.register")
 const registerForm = document.querySelector("#register-form")
 const loginForm = document.querySelector("#login-form")
 const loginCtn = document.querySelector(".login-ctn")
@@ -128,6 +130,7 @@ const handleClose = (formDiv) => {
 
 const handleOutsideClick = (formCtns) => {
     document.addEventListener('click', (event) => {
+        console.log(formCtns, event.target)
         if (!registerForm.contains(event.target) && !loginForm.contains(event.target)) {
             formCtns.forEach((formCtn) => {
                 formCtn.classList.remove('show');
@@ -219,6 +222,8 @@ if (registerForm && loginForm) {
     
     handleToggle(registerBtn, registerCtn);
     handleToggle(loginBtn, loginCtn);
+    handleToggle(loginBtnMobile, loginCtn);
+    handleToggle(registerBtnMobile, registerCtn)
     handleClose(registerCtn);
     handleClose(loginCtn);
 
