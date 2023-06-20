@@ -3,6 +3,7 @@ package credentials
 import (
 	"database/sql"
 	"fmt"
+	"forum/packages/utils"
 	"net/http"
 	"regexp"
 	"unicode"
@@ -75,8 +76,8 @@ func CheckPasswordHash(password, hash string) bool {
 // Checks user credentials validity.
 // Returns a json summary of the request, intended to be read by JS, as well as
 // the ID of the user if existing.
-func CheckUserCredentials(username, password string) (formValidation FormValidation, userID int) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+func CheckUserCredentials(dba utils.DB_Access, username, password string) (formValidation FormValidation, userID int) {
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		formValidation.Status = http.StatusInternalServerError
 		return formValidation, -1
@@ -108,7 +109,7 @@ func CheckUserCredentials(username, password string) (formValidation FormValidat
 // Global function checking credentials and adding new user to DB if possible.
 // Returns a json summary of the request (intended to be read by javascript),
 // and if user successfully inserted, returns their ID as well.
-func RegisterNewUser(username, password, email string) (formValidation FormValidation, lastInserted int) {
+func RegisterNewUser(dba utils.DB_Access, username, password, email string) (formValidation FormValidation, lastInserted int) {
 	if len(password) < 8 {
 		formValidation.InvalidFields = append(formValidation.InvalidFields, FormField{
 			Name:     "password",
@@ -129,7 +130,7 @@ func RegisterNewUser(username, password, email string) (formValidation FormValid
 		})
 	}
 
-	usernameExists, emailExists, errStatus := userExistsInDatabase(username, email)
+	usernameExists, emailExists, errStatus := userExistsInDatabase(dba, username, email)
 
 	if errStatus != 200 {
 		formValidation.Status = http.StatusBadRequest
@@ -153,20 +154,20 @@ func RegisterNewUser(username, password, email string) (formValidation FormValid
 		return formValidation, -1
 	}
 
-	formValidation.Status, lastInserted = addUserToDatabase(username, password, email, 4)
+	formValidation.Status, lastInserted = addUserToDatabase(dba, username, password, email, 4)
 
 	return formValidation, lastInserted
 }
 
 // Adds user to database.
 // Returns response status and newly-inserted user ID if successful
-func addUserToDatabase(username, password, email string, role_id int) (status int, id int) {
+func addUserToDatabase(dba utils.DB_Access, username, password, email string, role_id int) (status int, id int) {
 	hashPassword, err := HashPassword(password)
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}
@@ -195,8 +196,8 @@ func addUserToDatabase(username, password, email string, role_id int) (status in
 }
 
 // Checks if password and email are already existing in the database
-func userExistsInDatabase(username, email string) (usernameResult, emailResult bool, status int) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+func userExistsInDatabase(dba utils.DB_Access, username, email string) (usernameResult, emailResult bool, status int) {
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return false, false, http.StatusInternalServerError
 	}

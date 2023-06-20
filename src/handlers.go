@@ -41,8 +41,8 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Home"
-	tData.Categories, _ = data.GetCategories()
-	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
 
@@ -65,7 +65,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 		email := r.FormValue("email")
 
-		formValidation, lastInsertedID := credentials.RegisterNewUser(username, password, email)
+		formValidation, lastInsertedID := credentials.RegisterNewUser(DATABASE_ACCESS, username, password, email)
 		if lastInsertedID > 0 {
 			err = setSession(r, &w, lastInsertedID)
 			fmt.Println(err)
@@ -83,13 +83,13 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Topics"
-	tData.Categories, _ = data.GetCategories()
-	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
 	filters := data.RetrieveFilters(r)
 	filters.UserID = tData.User.ID
 
-	temp, err := data.TempQuery(filters)
+	temp, err := data.TempQuery(DATABASE_ACCESS, filters)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,7 +115,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		username := r.FormValue("username")
 		password := r.FormValue("password")
 
-		formValidation, userID = credentials.CheckUserCredentials(username, password)
+		formValidation, userID = credentials.CheckUserCredentials(DATABASE_ACCESS, username, password)
 		if userID > 0 {
 			_ = setSession(r, &w, userID)
 		}
@@ -145,7 +145,7 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Checks if a topic with this id exists
-	if exists, err := data.TopicExists(topicID); !exists || err != nil {
+	if exists, err := data.TopicExists(DATABASE_ACCESS, topicID); !exists || err != nil {
 		notFoundHandler(w, r)
 	}
 
@@ -157,10 +157,10 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Loads categories for left nav
-	tData.Categories, _ = data.GetCategories()
-	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
-	tData.Topic, err = data.QuerySingleTopicData(topicID, tData.User.ID)
+	tData.Topic, err = data.QuerySingleTopicData(DATABASE_ACCESS, topicID, tData.User.ID)
 	if err != nil {
 		log.Fatal(err)
 	}

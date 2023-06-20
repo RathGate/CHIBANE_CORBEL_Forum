@@ -3,11 +3,12 @@ package data
 import (
 	"database/sql"
 	"encoding/json"
+	"forum/packages/utils"
 	"strings"
 )
 
-func TopicExists(id int) (bool, error) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+func TopicExists(dba utils.DB_Access, id int) (bool, error) {
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return false, err
 	}
@@ -25,11 +26,11 @@ func TopicExists(id int) (bool, error) {
 	return (result > 0), nil
 }
 
-func QuerySingleTopicData(topicID int, userID int) (data TempTopic, err error) {
+func QuerySingleTopicData(dba utils.DB_Access, topicID int, userID int) (data TempTopic, err error) {
 	var tempTags sql.NullString
 	var tempUser TempUser
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return data, err
 	}
