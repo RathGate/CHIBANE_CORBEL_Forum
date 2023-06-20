@@ -1,14 +1,17 @@
 package data
 
-import "database/sql"
+import (
+	"database/sql"
+	"forum/packages/utils"
+)
 
 type Category struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
-func GetCategories() ([]Category, error) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+func GetCategories(dba utils.DB_Access) ([]Category, error) {
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return nil, err
 	}

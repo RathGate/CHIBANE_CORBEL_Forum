@@ -17,7 +17,7 @@ var (
 
 func setSession(r *http.Request, w *http.ResponseWriter, userID int) error {
 	session, _ := store.Get(r, cookieName)
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", DATABASE_ACCESS.ToString())
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func getSession(r *http.Request) (tData data.TemplateData) {
 		return tData
 	}
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", DATABASE_ACCESS.ToString())
 	if err != nil {
 		fmt.Println(err)
 		return tData

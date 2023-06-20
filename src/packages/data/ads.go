@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"forum/packages/utils"
 )
 
 type TopTrainer struct {
@@ -11,8 +12,8 @@ type TopTrainer struct {
 	Position  int    `json:"position"`
 }
 
-func QueryTopTrainers(userID int) (result [6]TopTrainer, err error) {
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+func QueryTopTrainers(dba utils.DB_Access, userID int) (result [6]TopTrainer, err error) {
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return result, err
 	}

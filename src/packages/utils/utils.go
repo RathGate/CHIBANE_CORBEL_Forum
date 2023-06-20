@@ -6,6 +6,19 @@ import (
 	"time"
 )
 
+type DB_Access struct {
+	User     string
+	Password string
+	Type     string
+	DBName   string
+	Port     int
+}
+
+func (dba DB_Access) ToString() string {
+	return fmt.Sprintf("%s:%s@tcp(127.0.0.1:%d)/%s?parseTime=true",
+		dba.User, dba.Password, dba.Port, dba.DBName)
+}
+
 func GetDeltaValues(a, b time.Time) []int {
 	if a.Location() != b.Location() {
 		b = b.In(a.Location())

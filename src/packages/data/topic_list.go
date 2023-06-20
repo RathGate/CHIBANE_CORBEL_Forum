@@ -189,11 +189,11 @@ func (t *TopicFilters) CorrectFilters() {
 }
 
 // Retrieves all base data from topics given specific filters, and their total count.
-func GetTopicListData(filters TopicFilters) (TopicData, error) {
+func GetTopicListData(dba utils.DB_Access, filters TopicFilters) (TopicData, error) {
 	var tempTags sql.NullString
 	data := TopicData{Filters: filters}
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		return data, err
 	}
@@ -305,13 +305,14 @@ LEFT JOIN (SELECT p1.id , p1.topic_id, p1.user_id, u.username, u.role_id, r.name
 	GROUP BY topic_id) p2
 ON p1.topic_id = p2.topic_id AND p1.creation_date = p2.max_date) AS lp ON lp.topic_id = t.id
 LEFT JOIN posts AS p ON p.id = tfp.post_id
-WHERE t.is_archived != 1;`}
+WHERE t.is_archived != 1`}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}
 	if t.CategoryID > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
 	}
+	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }
 
@@ -320,10 +321,10 @@ type TempData struct {
 	Filters TopicFilters
 }
 
-func TempQuery(filters TopicFilters) (TempData, error) {
+func TempQuery(dba utils.DB_Access, filters TopicFilters) (TempData, error) {
 	data := TempData{Filters: filters}
 
-	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
 		fmt.Println(err)
 		return data, err
@@ -383,7 +384,7 @@ func TempQuery(filters TopicFilters) (TempData, error) {
 
 		data.Topics = append(data.Topics, *tempTopic)
 	}
-	fmt.Println(PrettyPrint(data))
+
 	return data, nil
 }
 
@@ -436,5 +437,6 @@ LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
 
+	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }
