@@ -1,5 +1,6 @@
 {{ define "body" }}
 {{ template "header" .User }}
+<aside class="mobile-menu"></aside>
 <main>
     <section class="topics">
         {{ template "column_nav" . }}
@@ -9,7 +10,7 @@
             <span class="cut">. . . . . . .</span>
             {{template "latest_news" .}}
         </div>
-        {{ template "column_ads" .User }}
+        {{ template "column_ads" . }}
     </section>
 </main>
 {{ template "footer" }}
@@ -17,4 +18,5 @@
 <script src="/assets/js/rss.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
 {{ end }}

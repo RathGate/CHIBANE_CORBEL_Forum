@@ -48,7 +48,7 @@
         max-width: 250px;
         flex-shrink: 1;
     }
-    aside {
+    aside.side-nav {
         display: none !important;
     }
 }

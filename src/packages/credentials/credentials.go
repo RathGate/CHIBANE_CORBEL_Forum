@@ -153,14 +153,14 @@ func RegisterNewUser(username, password, email string) (formValidation FormValid
 		return formValidation, -1
 	}
 
-	formValidation.Status, lastInserted = addUserToDatabase(username, password, email)
+	formValidation.Status, lastInserted = addUserToDatabase(username, password, email, 4)
 
 	return formValidation, lastInserted
 }
 
 // Adds user to database.
 // Returns response status and newly-inserted user ID if successful
-func addUserToDatabase(username, password, email string) (status int, id int) {
+func addUserToDatabase(username, password, email string, role_id int) (status int, id int) {
 	hashPassword, err := HashPassword(password)
 	if err != nil {
 		return http.StatusInternalServerError, 0
@@ -180,7 +180,9 @@ func addUserToDatabase(username, password, email string) (status int, id int) {
 	defer stmt.Close()
 
 	var result sql.Result
-	result, err = stmt.Exec(username, hashPassword, email, 4)
+
+	result, err = stmt.Exec(username, hashPassword, email, role_id)
+
 	if err != nil {
 		return http.StatusInternalServerError, 0
 	}

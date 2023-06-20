@@ -1,0 +1,219 @@
+.bt-details {
+    /* background-color: rgba(255, 255, 255, .03); */
+    width: fit-content;
+    margin-left: auto;
+    font-size: 11px;
+    border-radius: 15px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .6);
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    min-height: 40px;
+}
+.bt-details .left, .bt-details .right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+.bt-details .icon{
+    height: 20px;
+}
+.bt-details .role {
+    height: 30px;
+}
+.base-topic-ctn .bt-item {
+    margin-bottom: 5px;
+}
+.bt-details img, .bt-item img {
+    max-height: 100%;
+    display: block;
+}
+.bt-item {
+    position: relative;
+    border: 2px solid var(--color-lighter-purple);
+    background-color: rgba(255, 255, 255, .03);
+    border-radius: 15px;
+    padding: 15px 20px 10px;
+    z-index: 2;
+    transition: background-color .15s ease;
+}
+
+h1.bt-title {
+    font-weight: 500;
+    margin: 5px 0 20px;
+}
+
+.bt-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 15px;
+}
+.bt-item:hover {
+    background-color: rgba(255, 255, 255, .06);
+}
+.bt-header .profile {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    justify-content: center;
+}
+.bt-header .profile .time {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+}
+.bt-header .modified {
+    font-style: italic;
+    opacity: .5;
+}
+.bt-header .pfp {
+    height: 60px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.bt-header .time {
+    font-size: 12px;
+    opacity: .5;
+}
+
+.bt-body {
+    margin-top: 20px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    position: relative;
+}
+.bt-body::after {
+    position: absolute;
+    content: "";
+    bottom: -15px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: white;
+    opacity: .1;
+}
+
+.bt-footer .ti-score {
+    flex-direction: row !important;
+    width: fit-content;
+    gap: 10px;
+}
+.bt-footer span.score {
+    font-size: 14px;
+}
+.bt-footer .score-ctn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bt-tags {
+    display: flex;
+    width: fit-content;
+    margin-left: auto;
+    padding: 0 15px;
+    gap: 5px;
+    align-items: center;
+}
+.bt-tags span {
+    letter-spacing: 1px;
+    font-size: 14px;
+    opacity: .5;
+}
+.bt-tags .tag-ctn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.bt-tags .tag {
+    border-radius: 5px;
+    padding: 2px 5px;
+    background-color: rgba(255, 255, 255, .1);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.answers-count {
+    margin: 5px 20px 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+}
+.answers-count span {
+    background-color: var(--color-bg);
+    padding-right: 5px;
+    z-index: 3;
+}
+.answers-count::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: white;
+    z-index: -1;
+    opacity: .1;
+}
+.answers-ctn {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.answers-ctn .bt-item {
+    border: 1px solid rgba(255, 255, 255, .1);
+}
+
+.score-ctn .icon {
+    height: 20px;
+}
+.score-ctn i {
+    font-size: 16px;
+}
+
+.base-topic-ctn .gap {
+    padding: 10px 0;
+}
+.bt-header .username {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.bt-header .user-role {
+    position: relative;
+    font-size: 11px;
+    margin-left: 15px;
+}
+.bt-header .user-role span {
+    padding: 0 5px 0 8px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    border-left: none;
+}
+.bt-header .user-role img {
+    max-height: 22px;
+    position: absolute;
+    left: -14px;
+    top: -3px;
+}
+.role-4 span {
+    color: #fff;
+    border-color: #ffffff4b !important;
+    /* background-color: rgba(255, 255, 255, 0.03); */
+}
+
+.role-1 span, .role-2 span {
+    color: #ffbe08;
+    border-color: #ffbd084b !important;
+    /* background-color: rgba(255, 224, 140, 0.03); */
+}
+.role-2 span{
+    color: rgb(255, 60, 93);
+    border-color: #ff39534b !important;
+    /* background-color: rgba(255, 140, 155, 0.03); */
+}

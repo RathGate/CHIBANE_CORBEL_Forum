@@ -1,11 +1,9 @@
 {{ define "topic_list" }}
     <div class="topics-container">
         {{ range .Topics }}
+        <a href="/topic/{{.ID}}">
         <div class="topic-item">
-            <div class="ti-score 
-                        {{ if gt .Score 0}}positive
-                        {{ else if lt .Score 0}}negative{{end}}
-                        {{ if .CurrentUserReaction.Valid}}voted{{end}}">
+            <div class="ti-score {{ if gt .Score 0}}positive{{ else if lt .Score 0}}negative{{end}}{{ if .CurrentUserReaction.Valid}}voted{{end}}">
                 <i class="fa-solid fa-arrow-up"></i>
                 <span>{{ .Score }}</span>
                 <i class="fa-solid fa-arrow-down"></i>
@@ -25,8 +23,7 @@
                             {{ if .Username.Valid }}
                             <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username.String}}"
                                     alt="User profile picture"></div>
-                            <div class="username"><span class="faded">Posted by </span></span><a
-                                    class="bold">{{.Username.String}}</a></div>
+                            <div class="username"><span class="faded">Posted by </span>{{.Username.String}}</div>
                             {{ else }}
                             <div class="pfp unknown"></div>
                             <div class="username faded">Posted by <span class="bold">deleted user</span></div>
@@ -39,8 +36,7 @@
                     </div>
                 </div>
             </div>
-            <div></div>
-        </div>
+        </div></a>
         {{ end }}
     </div>
     {{ template "pagination" .Filters }}
