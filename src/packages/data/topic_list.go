@@ -294,25 +294,27 @@ func QueryTopicsData(t TopicFilters) string {
 
 // Queries total topic count from database
 func QueryTopicCount(t TopicFilters) string {
-	var stringBuilder = []string{`SELECT COUNT(t.id) FROM topic_first_posts AS tfp 
-JOIN topics AS t ON t.id = tfp.topic_id
-JOIN categories AS c ON c.id = t.category_id
-LEFT JOIN (SELECT p1.id , p1.topic_id, p1.user_id, u.username, u.role_id, r.name as "role", p1.creation_date FROM posts p1
-	LEFT JOIN users AS u ON u.id = p1.user_id
-	LEFT JOIN roles AS r ON r.id = u.role_id
-	INNER JOIN (SELECT topic_id, max(creation_date) AS "max_date"
-	FROM posts
-	GROUP BY topic_id) p2
-ON p1.topic_id = p2.topic_id AND p1.creation_date = p2.max_date) AS lp ON lp.topic_id = t.id
-LEFT JOIN posts AS p ON p.id = tfp.post_id
-WHERE t.is_archived != 1`}
+	var stringBuilder = []string{`SELECT COUNT(*) from topics as t 
+	JOIN (SELECT t.* FROM topic_first_posts AS tfp 
+    JOIN topics AS t ON t.id = tfp.topic_id
+	JOIN categories AS c ON c.id = t.category_id
+	LEFT JOIN (SELECT p1.id , p1.topic_id, p1.user_id, u.username, u.role_id, r.name as "role", p1.creation_date FROM posts p1
+        LEFT JOIN users AS u ON u.id = p1.user_id
+        LEFT JOIN roles AS r ON r.id = u.role_id
+        INNER JOIN (SELECT topic_id, max(creation_date) AS "max_date"
+        FROM posts
+        GROUP BY topic_id) p2
+	ON p1.topic_id = p2.topic_id AND p1.creation_date = p2.max_date) AS lp ON lp.topic_id = t.id
+	LEFT JOIN posts AS p ON p.id = tfp.post_id
+	WHERE t.is_archived != 1`}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}
 	if t.CategoryID > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
 	}
-
+	stringBuilder = append(stringBuilder, "GROUP BY t.id) as temp on temp.id = t.id")
+	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }
 
@@ -437,5 +439,6 @@ LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
 
+	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }
