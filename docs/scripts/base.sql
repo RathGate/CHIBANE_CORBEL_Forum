@@ -21,6 +21,10 @@ SET time_zone = "+00:00";
 -- Database: `forum`
 --
 
+DROP DATABASE IF EXISTS forum;
+CREATE DATABASE IF NOT EXISTS forum;
+USE forum;
+
 -- --------------------------------------------------------
 
 --
