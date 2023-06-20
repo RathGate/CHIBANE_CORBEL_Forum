@@ -208,3 +208,33 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/new_topic.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
 	tmpl.Execute(w, tData)
 }
+
+func newTopicHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "New Topic"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl.Execute(w, tData)
+}
+
+func adminHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "New Topic"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl.Execute(w, tData)
+}
+func editProfileHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "New Topic"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl.Execute(w, tData)
+}
+func userHandler(w http.ResponseWriter, r *http.Request) {
+	tData := getSession(r)
+	tData.PageTitle = "New Topic"
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl.Execute(w, tData)
+}

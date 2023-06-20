@@ -53,7 +53,7 @@ function CloseWhenOutside(div, btn, btn2=null) {
     document.addEventListener('click', (event) => {
             if (!div.contains(event.target) && !btn.contains(event.target) && (btn2 && !btn2.contains(event.target))) {
                 div.classList.remove('visible');
-                document.querySelector(".hide").classList.remove("visible")
+                // document.querySelector(".hide").classList.remove("visible")
                 document.body.classList.remove("no-scroll")
             }
 
