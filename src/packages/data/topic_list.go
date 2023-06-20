@@ -20,10 +20,84 @@ type Topic struct {
 	Content             string         `json:"content"`
 	Username            sql.NullString `json:"username"`
 	CreationDate        time.Time      `json:"creation_date"`
-	Answers             int64          `json:"answers"`
+	Answers             int64          `json:"answer_count"`
 	Score               int64          `json:"score"`
 	Tags                []string       `json:"tags"`
 	CurrentUserReaction sql.NullInt64  `json:"current_user_reaction"`
+}
+
+type TempTopic struct {
+	ID          int64           `json:"id"`
+	Title       string          `json:"title"`
+	Category    string          `json:"category"`
+	FirstPost   TempPost        `json:"first_post"`
+	AnswerCount int64           `json:"answer_count"`
+	Tags        []string        `json:"tags"`
+	Answers     []TempPost      `json:"answers"`
+	State       TempState       `json:"topic_state"`
+	Permissions TempPermissions `json:"permissions"`
+}
+type TempPost struct {
+	ID                  int64         `json:"id"`
+	User                BaseUser      `json:"original_poster"`
+	Content             string        `json:"content"`
+	Timeline            Timeline      `json:"timeline"`
+	Reactions           Reactions     `json:"reactions"`
+	CurrentUserReaction sql.NullInt64 `json:"current_user_reaction"`
+}
+
+type Timeline struct {
+	CreationDate     sql.NullTime
+	ModificationDate sql.NullTime
+}
+
+type Reactions struct {
+	Score    int   `json:"score"`
+	Likes    int64 `json:"likes"`
+	Dislikes int64 `json:"dislikes"`
+}
+
+type TempUser struct {
+	ID       sql.NullInt64
+	Username sql.NullString
+	RoleID   sql.NullInt64
+	Role     sql.NullString
+}
+type BaseUser struct {
+	ID        int    `json:"id"`
+	Username  string `json:"username"`
+	RoleID    int    `json:"role_id"`
+	Role      string `json:"role"`
+	IsDeleted bool   `json:"is_deleted"`
+}
+
+func (temp *TempUser) GetValidValues() (user BaseUser) {
+	if !temp.ID.Valid || !temp.Username.Valid || !temp.RoleID.Valid {
+		return BaseUser{IsDeleted: true}
+	}
+	user = BaseUser{
+		ID:       int(temp.ID.Int64),
+		Username: temp.Username.String,
+		RoleID:   int(temp.RoleID.Int64),
+		Role:     temp.Role.String,
+	}
+
+	return user
+}
+
+type TempState struct {
+	IsClosed   int64 `json:"is_closed"`
+	IsArchived int64 `json:"is_archived"`
+	IsPinned   int64 `json:"is_pinned"`
+}
+
+type TempPermissions struct {
+	MinReadRole  int64 `json:"min_read_role"`
+	MinWriteRole int64 `json:"min_write_role"`
+}
+
+type Post struct {
+	ID int64 `json:"id"`
 }
 type TopicFilters struct {
 	OrderBy     string `json:"orderBy"`

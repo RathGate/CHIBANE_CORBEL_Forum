@@ -6,6 +6,7 @@
 @import url(forms.css);
 @import url(pagination.css);
 @import url(footer.css);
+@import url(topic_view.css);
 
 :root {
     --color-bg: #1d1b22;

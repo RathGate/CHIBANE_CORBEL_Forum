@@ -19,6 +19,7 @@ func generateTemplate(templateName string, filepaths []string) *template.Templat
 		"getTimeSincePosted":  utils.GetTimeSincePosted,
 		"getPagesArr":         utils.GetPagesArr,
 		"GetPaginationValues": utils.GetPaginationValues,
+		"getAllowedRoles":     data.GetAllowedRoles,
 	}).ParseFiles(filepaths...)
 	// Error check:
 	if err != nil {
@@ -40,12 +41,8 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Home"
-
-	categories, err := data.GetCategories()
-	if err != nil {
-		log.Fatal(err)
-	}
-	tData.Categories = categories
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
 	tmpl.Execute(w, tData)
@@ -85,14 +82,8 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Topics"
-
-	categories, err := data.GetCategories()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	tData.Categories = categories
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
 
 	filters := data.RetrieveFilters(r)
 	filters.UserID = tData.User.ID
@@ -165,15 +156,14 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Loads categories for left nav
-	categories, err := data.GetCategories()
+	tData.Categories, _ = data.GetCategories()
+	tData.TopTrainers, _ = data.QueryTopTrainers(tData.User.ID)
+
+	tData.Topic, err = data.QuerySingleTopicData(topicID, tData.User.ID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		log.Fatal(err)
 	}
-	tData.Categories = categories
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
 	tmpl.Execute(w, tData)
-
-	data.TopicExists(topicID)
 }
