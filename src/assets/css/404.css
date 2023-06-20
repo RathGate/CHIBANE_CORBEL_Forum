@@ -1,0 +1,16 @@
+@import url(main.css);
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.content {
+
+}
+.f0f {
+    font-size: 120px;
+    color: #e63c3c;
+    letter-spacing: 5px;
+}

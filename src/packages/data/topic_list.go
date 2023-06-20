@@ -312,7 +312,7 @@ WHERE t.is_archived != 1`}
 	if t.CategoryID > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
 	}
-	fmt.Println(strings.Join(stringBuilder, "\n"))
+
 	return strings.Join(stringBuilder, "\n")
 }
 
@@ -437,6 +437,5 @@ LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
 
-	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }

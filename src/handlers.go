@@ -29,12 +29,10 @@ func generateTemplate(templateName string, filepaths []string) *template.Templat
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
-	tData := getSession(r)
-	tData.PageTitle = "404 Not Found"
 	w.WriteHeader(http.StatusNotFound)
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/404.html"})
-	tmpl.Execute(w, tData)
+	tmpl := generateTemplate("404.html", []string{"templates/404.html"})
+	tmpl.Execute(w, nil)
 }
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
@@ -44,9 +42,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/mobile-menus.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
 
-	tmpl.Execute(w, tData)
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
@@ -102,7 +101,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 
 }
@@ -165,47 +164,7 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html"})
-	tmpl.Execute(w, tData)
-}
-
-func newTopicHandler(w http.ResponseWriter, r *http.Request) {
-	tData := getSession(r)
-	tData.PageTitle = "New Topic"
-
-	if r.Method == "POST" {
-		err := r.ParseForm()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Extracts form values
-		categoryID, err := strconv.Atoi(r.FormValue("category"))
-		if err != nil {
-			http.Error(w, "Invalid category ID", http.StatusBadRequest)
-			return
-		}
-		title := r.FormValue("title")
-		content := r.FormValue("content")
-		userID := tData.User.ID
-
-		// Creates the new topic in the database
-		topicID, err := data.QueryNewTopic(categoryID, title, userID, content, 0)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		// Redirects to the newly created topic
-		http.Redirect(w, r, "/topic/"+strconv.FormatInt(topicID, 10), http.StatusSeeOther)
-		return
-	}
-
-	// Loads categories for select input
-	tData.Categories, _ = data.GetCategories()
-
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/new_topic.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
 
