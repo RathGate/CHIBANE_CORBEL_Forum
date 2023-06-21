@@ -109,9 +109,11 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData.Topics = temp.Topics
 	tData.Filters = temp.Filters
 	if r.Method == "POST" {
+		fmt.Println("here")
 		r.ParseForm()
-		tmpl := generateTemplate("", []string{"templates/components/topic_list.html", "templates/components/pagination.html"})
-		tmpl.ExecuteTemplate(w, "topic_list", tData)
+		tmpl := generateTemplate("", []string{"templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/noresult.html"})
+		err := tmpl.ExecuteTemplate(w, "topic_list", tData)
+		fmt.Println(err)
 		return
 	}
 
