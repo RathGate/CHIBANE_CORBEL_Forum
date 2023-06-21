@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Jun 20, 2023 at 11:11 PM
--- Server version: 8.0.31
--- PHP Version: 8.0.26
+-- Hôte : 127.0.0.1:3306
+-- Généré le : mer. 21 juin 2023 à 06:17
+-- Version du serveur : 8.0.31
+-- Version de PHP : 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `forum`
+-- Base de données : `forum`
 --
 
 DROP DATABASE IF EXISTS forum;
@@ -28,7 +28,7 @@ USE forum;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
+-- Structure de la table `categories`
 --
 
 DROP TABLE IF EXISTS `categories`;
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `categories` (
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `categories`
+-- Déchargement des données de la table `categories`
 --
 
 INSERT INTO `categories` (`id`, `name`, `min_read_role`, `min_write_role`) VALUES
@@ -62,7 +62,7 @@ INSERT INTO `categories` (`id`, `name`, `min_read_role`, `min_write_role`) VALUE
 -- --------------------------------------------------------
 
 --
--- Table structure for table `files`
+-- Structure de la table `files`
 --
 
 DROP TABLE IF EXISTS `files`;
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `files` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `posts`
+-- Structure de la table `posts`
 --
 
 DROP TABLE IF EXISTS `posts`;
@@ -91,14 +91,14 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `modification_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `topic_id` (`topic_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=71 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `posts`
+-- Déchargement des données de la table `posts`
 --
 
 INSERT INTO `posts` (`id`, `topic_id`, `user_id`, `content`, `creation_date`, `modification_date`) VALUES
-(1, 1, 1, 'Dear forum members, we have updated the forum rules to ensure a better community experience.', '2023-06-21 00:47:31', NULL),
+(1, 1, 1, 'Dear forum members, we have updated the forum rules to ensure a better community experience.', '2023-06-02 00:47:31', NULL),
 (2, 2, 6, 'Let\'s discuss our favorite Pokémon games. Which one is your all-time favorite and why?', '2023-06-21 00:51:00', NULL),
 (3, 2, 7, 'My all-time favorite Pokémon game is Pokémon Emerald. I love the vast region of Hoenn and the Battle Frontier.', '2023-06-21 00:51:03', NULL),
 (4, 2, 8, 'I have a soft spot for Pokémon FireRed/LeafGreen. They were my first Pokémon games, and the nostalgia is unbeatable.', '2023-06-21 00:51:03', NULL),
@@ -166,13 +166,12 @@ INSERT INTO `posts` (`id`, `topic_id`, `user_id`, `content`, `creation_date`, `m
 (66, 9, 9, 'Let\'s discuss underrated Pokémon games that deserve more recognition. Which lesser-known titles have you enjoyed playing?', '2023-06-21 01:07:54', NULL),
 (67, 10, 10, 'Let\'s share our favorite Pokémon mobile games to play on the go. Which Pokémon games do you enjoy playing on your phone or tablet?', '2023-06-21 01:08:02', NULL),
 (68, 11, 12, 'Let\'s share effective EV training methods for Pokémon. How do you efficiently train EVs to optimize your Pokémon\'s stats?', '2023-06-21 01:08:19', NULL),
-(69, 12, 9, 'Share your most epic shiny chain encounters. How many Pokémon did you chain before encountering the shiny of your dreams?', '2023-06-21 01:08:26', NULL),
 (70, 14, 11, 'Share your favorite ROM hacks with unique and captivating storylines. Which hacks have impressed you with their engaging narratives?', '2023-06-21 01:09:28', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post_reactions`
+-- Structure de la table `post_reactions`
 --
 
 DROP TABLE IF EXISTS `post_reactions`;
@@ -186,10 +185,20 @@ CREATE TABLE IF NOT EXISTS `post_reactions` (
   KEY `reaction_id` (`reaction_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+--
+-- Déchargement des données de la table `post_reactions`
+--
+
+INSERT INTO `post_reactions` (`post_id`, `reaction_id`, `user_id`, `date`) VALUES
+(1, 1, 2, '2023-06-21 08:12:47'),
+(1, 1, 3, '2023-06-21 08:12:47'),
+(1, 1, 4, '2023-06-21 08:12:47'),
+(1, 1, 8, '2023-06-21 08:12:47');
+
 -- --------------------------------------------------------
 
 --
--- Table structure for table `reactions`
+-- Structure de la table `reactions`
 --
 
 DROP TABLE IF EXISTS `reactions`;
@@ -198,12 +207,20 @@ CREATE TABLE IF NOT EXISTS `reactions` (
   `name` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `reactions`
+--
+
+INSERT INTO `reactions` (`id`, `name`) VALUES
+(2, 'dislike'),
+(1, 'like');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `roles`
+-- Structure de la table `roles`
 --
 
 DROP TABLE IF EXISTS `roles`;
@@ -215,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `roles`
+-- Déchargement des données de la table `roles`
 --
 
 INSERT INTO `roles` (`id`, `name`) VALUES
@@ -227,7 +244,7 @@ INSERT INTO `roles` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tags`
+-- Structure de la table `tags`
 --
 
 DROP TABLE IF EXISTS `tags`;
@@ -239,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `tags`
+-- Déchargement des données de la table `tags`
 --
 
 INSERT INTO `tags` (`id`, `name`) VALUES
@@ -256,7 +273,7 @@ INSERT INTO `tags` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `topics`
+-- Structure de la table `topics`
 --
 
 DROP TABLE IF EXISTS `topics`;
@@ -272,10 +289,10 @@ CREATE TABLE IF NOT EXISTS `topics` (
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   KEY `min_read_role` (`min_read_role`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `topics`
+-- Déchargement des données de la table `topics`
 --
 
 INSERT INTO `topics` (`id`, `category_id`, `title`, `is_closed`, `is_archived`, `is_pinned`, `min_read_role`, `min_write_role`) VALUES
@@ -290,14 +307,12 @@ INSERT INTO `topics` (`id`, `category_id`, `title`, `is_closed`, `is_archived`, 
 (9, 4, 'Underrated Pokémon Games', 0, 0, 0, 4, 4),
 (10, 5, 'Favorite Pokémon Mobile Games', 0, 0, 0, 4, 4),
 (11, 7, 'Effective EV Training Methods', 0, 0, 0, 4, 4),
-(12, 8, 'Epic Shiny Chain Encounters', 0, 0, 0, 4, 4),
-(13, 8, 'Epic Shiny Chain Encounters', 0, 0, 0, 4, 4),
 (14, 10, 'ROM Hacks with Unique Storylines', 0, 0, 0, 4, 4);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `topic_first_posts`
+-- Structure de la table `topic_first_posts`
 --
 
 DROP TABLE IF EXISTS `topic_first_posts`;
@@ -309,7 +324,7 @@ CREATE TABLE IF NOT EXISTS `topic_first_posts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `topic_first_posts`
+-- Déchargement des données de la table `topic_first_posts`
 --
 
 INSERT INTO `topic_first_posts` (`topic_id`, `post_id`) VALUES
@@ -329,7 +344,7 @@ INSERT INTO `topic_first_posts` (`topic_id`, `post_id`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `topic_tags`
+-- Structure de la table `topic_tags`
 --
 
 DROP TABLE IF EXISTS `topic_tags`;
@@ -341,7 +356,7 @@ CREATE TABLE IF NOT EXISTS `topic_tags` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `topic_tags`
+-- Déchargement des données de la table `topic_tags`
 --
 
 INSERT INTO `topic_tags` (`topic_id`, `tag_id`) VALUES
@@ -356,13 +371,12 @@ INSERT INTO `topic_tags` (`topic_id`, `tag_id`) VALUES
 (5, 7),
 (11, 7),
 (6, 8),
-(12, 8),
 (7, 9);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Structure de la table `users`
 --
 
 DROP TABLE IF EXISTS `users`;
@@ -384,7 +398,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Dumping data for table `users`
+-- Déchargement des données de la table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `email`, `birthdate`, `role_id`, `profile_picture_id`, `creation_date`, `last_visit_date`) VALUES
@@ -402,24 +416,24 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `birthdate`, `role_i
 (12, 'SleepyRiolu', '$2a$14$tICUjQbLIsBFZZaPPPRnqeB9eTmnQroZ8Y0Be3IahgnM/8X8RiXMa', 'sleepyriolu@example.com', NULL, 4, NULL, '2023-06-07 16:42:53', NULL);
 
 --
--- Constraints for dumped tables
+-- Contraintes pour les tables déchargées
 --
 
 --
--- Constraints for table `categories`
+-- Contraintes pour la table `categories`
 --
 ALTER TABLE `categories`
   ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`min_read_role`) REFERENCES `roles` (`id`),
   ADD CONSTRAINT `categories_ibfk_2` FOREIGN KEY (`min_write_role`) REFERENCES `roles` (`id`);
 
 --
--- Constraints for table `posts`
+-- Contraintes pour la table `posts`
 --
 ALTER TABLE `posts`
   ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `post_reactions`
+-- Contraintes pour la table `post_reactions`
 --
 ALTER TABLE `post_reactions`
   ADD CONSTRAINT `post_reactions_ibfk_1` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
@@ -427,28 +441,28 @@ ALTER TABLE `post_reactions`
   ADD CONSTRAINT `post_reactions_ibfk_3` FOREIGN KEY (`reaction_id`) REFERENCES `reactions` (`id`);
 
 --
--- Constraints for table `topics`
+-- Contraintes pour la table `topics`
 --
 ALTER TABLE `topics`
   ADD CONSTRAINT `topics_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `topics_ibfk_3` FOREIGN KEY (`min_read_role`) REFERENCES `roles` (`id`);
 
 --
--- Constraints for table `topic_first_posts`
+-- Contraintes pour la table `topic_first_posts`
 --
 ALTER TABLE `topic_first_posts`
   ADD CONSTRAINT `topic_first_posts_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `topic_first_posts_ibfk_2` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `topic_tags`
+-- Contraintes pour la table `topic_tags`
 --
 ALTER TABLE `topic_tags`
   ADD CONSTRAINT `topic_tags_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `topic_tags_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `users`
+-- Contraintes pour la table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`profile_picture_id`) REFERENCES `files` (`id`),
