@@ -10,7 +10,7 @@
                 {{ range .TopTrainers }}
                     {{ if and (le .Position 5) (ne .Position 0) }}
                     <div class="trainer-item">
-                        <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                        <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username}}" alt=""></div>
                         <div class="username">{{.Username}}</div>
                         <div class="score"><span class="g-icon material-symbols-outlined">forum</span>{{.PostCount}}</div>
                     </div>
@@ -19,7 +19,7 @@
                 {{ $sixth := index .TopTrainers 5}}
                 {{ if and (gt $sixth.Position 5) (eq .User.ID $sixth.UserID) }}
                 <div class="trainer-item you">
-                    <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                    <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{$sixth.Username}}" alt=""></div>
                     <div class="username">{{$sixth.Username}}</div>
                     <div class="position">({{$sixth.Position}})</div>
                     <div class="score"><span class="g-icon material-symbols-outlined">forum</span>{{$sixth.PostCount}}</div>

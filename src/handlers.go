@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"forum/packages/credentials"
 	"forum/packages/data"
 	"forum/packages/utils"
@@ -51,7 +52,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/mobile-menus.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
 
-	tmpl.Execute(w, tData)
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
@@ -191,11 +193,40 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func newTopicHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("here")
 	tData := getSession(r)
 	tData.PageTitle = "New Topic"
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
+	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
-	tmpl.Execute(w, tData)
+	if r.Method == "POST" {
+		r.ParseForm()
+		tempCat := r.FormValue("category_id")
+		categoryID, err := strconv.Atoi(tempCat)
+		if err != nil {
+			jsonValues, _ := json.Marshal(data.AnswerValidation{
+				Status: http.StatusBadRequest,
+				Error:  "You must choose a valid category",
+			})
+			w.Write(jsonValues)
+			return
+		}
+		title := r.FormValue("title")
+		content := r.FormValue("content")
+		jsonValues, _ := json.Marshal(data.CreateNewTopic(DATABASE_ACCESS, tData.User.ID, tData.User.RoleID, categoryID, title, content))
+
+		w.Write(jsonValues)
+		return
+	}
+
+	if !tData.User.IsAuthenticated {
+		notAllowedHandler(w, r)
+		return
+	}
+
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/new_topic.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html", "templates/components/create_topic.html"})
+	err := tmpl.Execute(w, tData)
+	fmt.Println(err)
 }
 
 func adminHandler(w http.ResponseWriter, r *http.Request) {

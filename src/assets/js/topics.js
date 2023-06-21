@@ -137,49 +137,49 @@ function retrieveCategory() {
     }
     return categoryParam
 }
-const popupContainer = document.getElementById("pop-up-container");
-const newTopicBtn = document.querySelector(".btn-new-topic");
-const closePopupBtn = document.querySelector("#pop-up-container .pop-up-close-btn");
-const popupForm = document.querySelector("#pop-up-container form");
+// const popupContainer = document.getElementById("pop-up-container");
+// const newTopicBtn = document.querySelector(".btn-new-topic");
+// const closePopupBtn = document.querySelector("#pop-up-container .pop-up-close-btn");
+// const popupForm = document.querySelector("#pop-up-container form");
 
-function togglePopup() {
-    if (popupContainer.classList.contains("show")) {
-        popupContainer.classList.remove("show");
-        setTimeout(() => {
-            popupContainer.style.display = "none";
-        }, 300);
-    } else {
-        popupContainer.style.display = "flex";
-        setTimeout(() => {
-            popupContainer.classList.add("show");
-        }, 0);
-    }
-}
+// function togglePopup() {
+//     if (popupContainer.classList.contains("show")) {
+//         popupContainer.classList.remove("show");
+//         setTimeout(() => {
+//             popupContainer.style.display = "none";
+//         }, 300);
+//     } else {
+//         popupContainer.style.display = "flex";
+//         setTimeout(() => {
+//             popupContainer.classList.add("show");
+//         }, 0);
+//     }
+// }
 
-function closePopup() {
-    popupContainer.classList.remove("show");
-    setTimeout(() => {
-        popupContainer.style.display = "none";
-    }, 300);
-}
+// function closePopup() {
+//     popupContainer.classList.remove("show");
+//     setTimeout(() => {
+//         popupContainer.style.display = "none";
+//     }, 300);
+// }
 
-function handleNewTopicOutsideClick(event) {
-    if (event.target === popupContainer) {
-        closePopup();
-    }
-}
+// function handleNewTopicOutsideClick(event) {
+//     if (event.target === popupContainer) {
+//         closePopup();
+//     }
+// }
 
-function handleNewTopicClick() {
-    togglePopup();
-}
+// function handleNewTopicClick() {
+//     togglePopup();
+// }
 
-function handleNewTopicClose() {
-    closePopup();
-}
+// function handleNewTopicClose() {
+//     closePopup();
+// }
 
-if (newTopicBtn && popupContainer && closePopupBtn && popupForm) {
-    newTopicBtn.addEventListener("click", handleNewTopicClick);
-    closePopupBtn.addEventListener("click", handleNewTopicClose);
-    document.addEventListener("click", handleNewTopicOutsideClick);
-}
+// if (newTopicBtn && popupContainer && closePopupBtn && popupForm) {
+//     newTopicBtn.addEventListener("click", handleNewTopicClick);
+//     closePopupBtn.addEventListener("click", handleNewTopicClose);
+//     document.addEventListener("click", handleNewTopicOutsideClick);
+// }
 

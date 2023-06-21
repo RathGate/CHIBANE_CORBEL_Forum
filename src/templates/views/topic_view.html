@@ -21,7 +21,7 @@
                 <h1 class="bt-title">{{$topic.Title}}</h1>
                 <div class="bt-item">
                     <div class="bt-header">
-                        <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                        <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{$firstPost.User.Username}}" alt=""></div>
                         <div class="profile">
                             <div class="username">
                                 <span>{{$firstPost.User.Username}}</span>
@@ -75,7 +75,7 @@
                 {{ range $topic.Answers }}
                 <div class="bt-item">
                     <div class="bt-header">
-                        <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                        <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.User.Username}}" alt=""></div>
                         <div class="profile">
                             <div class="username">
                                 <span>{{.User.Username}}</span>
@@ -120,14 +120,18 @@
                             <div class="intro">
                                 <i class="fa-solid fa-reply"></i>
                                 <span>Replying as <span class="username">{{.User.Username}}</span></span>
-                                <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                                <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.User.Username}}" alt=""></div>
                             </div>
                             <textarea class="answer" name="" id="" cols="30" rows="10"></textarea>
                         </div>
                         <div class="a-error"></div>
                         <div class="send-btn send-answer"><i class="fa-regular fa-paper-plane"></i>Send </div>
                     </div>
-                {{ end }}
+                {{ else }}
+                    <div class="answer-not-authenticated">
+                        You must be logged in to answer this topic !
+                    </div>
+                {{end }}
             </div>
         </div>
         {{ template "column_ads" . }}

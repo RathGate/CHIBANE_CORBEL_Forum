@@ -1,0 +1,36 @@
+{{ define "create_topic" }}
+    <h1 class="bt-title no-margin">CREATING A NEW TOPIC</h1>
+    <form id="new-tp-form" method="post">
+    <div class="all-inputs">
+        <div class="moderation-option"></div>
+        <div class="topic-category">
+            <select class="new mandatory" name="category" id="">
+                <option value="" selected>-- SELECT A CATEGORY --</option>
+                {{ range .Categories }}
+                {{ if and (le $.User.RoleID .MinReadRole) (le $.User.RoleID .MinWriteRole) }}
+                <option value="{{.ID}}">{{.Name}}</option>
+                {{ end }}
+                {{end}}
+            </select>
+        </div>
+        <div class="text-zone title">
+            <input class="new mandatory" type="text" class="answer" name="title" placeholder="Write the title of your topic here"></input>
+        </div>
+        <div class="text-zone post">
+            <div class="intro">
+                <i class="fa-regular fa-pen-to-square"></i>
+                <span>WRITING as <span class="username">{{.User.Username}}</span></span>
+                <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.User.Username}}" alt=""></div>
+            </div>
+            <textarea class="answer new mandatory" name="post" cols="30" rows="10"
+                placeholder="Write the content of your topic here"></textarea>
+        </div>
+    </div>
+    <div class="a-error"></div>
+    <input id="sbm" type="submit" class="hidden">
+    <label for="sbm" class="send-btn send-answer"><i class="fa-regular fa-paper-plane"></i>Send </label>
+    </form>
+
+
+
+{{ end }}

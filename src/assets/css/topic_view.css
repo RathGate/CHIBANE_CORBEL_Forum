@@ -84,6 +84,7 @@ h1.bt-title {
     font-size: 14px;
     margin-bottom: 20px;
     position: relative;
+    min-height: 40px;
 }
 .bt-body::after {
     position: absolute;
@@ -334,4 +335,11 @@ textarea.answer {
 }
 .send-btn:hover::before {
     left: -2px;
+}
+
+.answer-not-authenticated {
+    padding: 15px 20px;
+    border: 2px solid white;
+    border-radius: 15px;
+    opacity: .5;
 }

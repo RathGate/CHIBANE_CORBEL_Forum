@@ -2,13 +2,13 @@
     <div class="topics-container">
         {{ if .Topics }}
             {{ range .Topics }}
-            <a href="/topic/{{.ID}}">
             <div class="topic-item">
                 <div class="ti-score {{ if gt .Score 0}}positive{{ else if lt .Score 0}}negative{{end}}{{ if .FirstPost.CurrentUserReaction.Valid}}voted{{end}}">
                     <i class="fa-solid fa-arrow-up"></i>
                     <span>{{ .Score }}</span>
                     <i class="fa-solid fa-arrow-down"></i>
                 </div>
+                <a href="/topic/{{.ID}}">
                 <div class="ti-content">
                     <div class="ti-title">{{.Title}}</div>
                     <div class="ti-tag-container">
@@ -51,8 +51,8 @@
                             <div class="answers faded"><i class="fa-regular fa-comments"></i>{{.AnswerCount}}</div>
                         </div>
                     </div>
-                </div>
-            </div></a>
+                </div></a>
+            </div>
             {{ end }}
         {{ else }}
         {{ template "no_result" "No result to show here..."}}

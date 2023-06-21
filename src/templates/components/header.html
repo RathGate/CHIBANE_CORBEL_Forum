@@ -1,7 +1,7 @@
 {{ define "header" }}
     <header>
         <nav class="nav-bar">
-            <div class="left">LOGO</div>
+            <div class="left"><img src="/assets/img/logo_lol.png" alt=""></div>
             <div class="center">
                 <div class="form">
                     <div class="search-bar">
@@ -21,7 +21,7 @@
                 {{ else }}
                     <div class="nav-profile">
                         <div class="greets">Hi, <span class="username">{{ .Username }}</span> !</div>
-                        <div class="pfp"><img src="/assets/img/pfp.png" alt="User profile picture"></div>
+                        <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username}}" alt="User profile picture"></div>
                     </div>
                 {{ end }}
             </div>
@@ -30,7 +30,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 {{ if .IsAuthenticated }}
-                    <div class="nav-btn profile"><img src="/assets/img/pfp.png" alt=""></div>
+                    <div class="nav-btn profile"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username}}" alt=""></div>
                     
                 {{ end }}
                 <div class="nav-btn menu"><i class="fa-solid fa-bars"></i></div>
@@ -38,7 +38,7 @@
             {{ if .IsAuthenticated }}
             <div class="smol-profile">
                 <div class="user">
-                    <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                    <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.Username}}" alt=""></div>
                     <div class="info">
                         <div class="username">{{ .Username }}</div>
                         <div class="badge-role user-role">
@@ -52,8 +52,8 @@
                     <div class="icon"><img src="/assets/img/icons/bullbasaur.png" alt=""></div>
                 </div>
                 <div class="option-ctn options-profile">
-                    <a href=""><div class="option"><span class="icon material-symbols-outlined">person</span>My Profile</div></a>
-                    <a href=""><div class="option"><span class="icon material-symbols-outlined">edit_square</span>Edit Profile</div></a>
+                    <a><div class="option"><span class="icon material-symbols-outlined">person</span>My Profile</div></a>
+                    <a><div class="option"><span class="icon material-symbols-outlined">edit_square</span>Edit Profile</div></a>
                 </div>
                 <div class="sep">
                     <div></div>

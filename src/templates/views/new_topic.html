@@ -1,0 +1,16 @@
+{{ define "body" }}
+{{ template "header" .User }}
+{{ template "mobile-menus" . }}
+<main>
+    <section class="topics">
+        {{ template "column_nav" . }}
+        {{ $topic := .Topic }} {{ $firstPost := .Topic.FirstPost }}
+        <div class="center-part main-content">
+            {{ template "create_topic" . }}
+        </div>
+        {{ template "column_ads" . }}
+    </section>
+</main>
+{{ template "footer" }}
+<script src="/assets/js/new_topic.js"></script>
+{{ end }}

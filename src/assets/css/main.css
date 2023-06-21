@@ -54,7 +54,7 @@ html {
 }
 
 main {
-    padding-top: 75px;
+    padding: 75px 0;
     flex-shrink: 0;
     flex: 1;
 }
