@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"forum/packages/data"
 	"net/http"
 
@@ -26,7 +25,6 @@ func setSession(r *http.Request, w *http.ResponseWriter, userID int) error {
 	var tempUsername string
 	err = db.QueryRow(`SELECT username FROM users WHERE id = ?`, userID).Scan(&tempUsername)
 	if err != nil || tempUsername == "" {
-		fmt.Println(err)
 		return err
 	}
 	session.Values["authenticated"] = true
@@ -43,6 +41,7 @@ func clearSession(r *http.Request, w *http.ResponseWriter) {
 }
 
 func getSession(r *http.Request) (tData data.TemplateData) {
+	tData.User.RoleID = 4
 	session, _ := store.Get(r, cookieName)
 	if (session.Values["authenticated"] == nil || !session.Values["authenticated"].(bool)) || !(session.Values["id"].(int) > 0) {
 		return tData
@@ -50,7 +49,6 @@ func getSession(r *http.Request) (tData data.TemplateData) {
 
 	db, err := sql.Open("mysql", DATABASE_ACCESS.ToString())
 	if err != nil {
-		fmt.Println(err)
 		return tData
 	}
 	defer db.Close()
@@ -61,7 +59,6 @@ func getSession(r *http.Request) (tData data.TemplateData) {
     WHERE u.id = ?`, session.Values["id"].(int)).Scan(&tempUser.ID, &tempUser.Username, &tempUser.RoleID, &tempUser.Role)
 
 	if checkUser := tempUser.GetValidValues(); err != nil || checkUser.IsDeleted {
-		fmt.Println(err)
 		return tData
 	} else {
 		tData.User = checkUser

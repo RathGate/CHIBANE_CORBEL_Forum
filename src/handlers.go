@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"forum/packages/credentials"
@@ -34,18 +35,24 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	tmpl := generateTemplate("404.html", []string{"templates/404.html"})
 	tmpl.Execute(w, nil)
 }
+func notAllowedHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusForbidden)
+
+	tmpl := generateTemplate("403.html", []string{"templates/403.html"})
+	tmpl.Execute(w, nil)
+}
 
 /* indexHandler handles the index page, parses most of the templates and executes them */
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Home"
-	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
+
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/mobile-menus.html", "templates/views/index.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/cat_display.html", "templates/components/latest_news.html", "templates/components/new_topic.html"})
 
-	err := tmpl.Execute(w, tData)
-	fmt.Println(err)
+	tmpl.Execute(w, tData)
 }
 
 /* registerHandler handles the registration form and redirects to the (temporary) success page */
@@ -66,8 +73,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 
 		formValidation, lastInsertedID := credentials.RegisterNewUser(DATABASE_ACCESS, username, password, email)
 		if lastInsertedID > 0 {
-			err = setSession(r, &w, lastInsertedID)
-			fmt.Println(err)
+			setSession(r, &w, lastInsertedID)
 		}
 
 		jsonValues, _ := json.Marshal(formValidation)
@@ -82,13 +88,21 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "Topics"
-	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
 	filters := data.RetrieveFilters(r)
+
+	if filters.CategoryID != 0 {
+		cat, err := data.GetCategoryData(DATABASE_ACCESS, filters.CategoryID)
+		if (err == sql.ErrNoRows && filters.CategoryID != 0) || cat.MinReadRole < int64(tData.User.RoleID) {
+			http.Redirect(w, r, "/topics", http.StatusSeeOther)
+		}
+	}
+
 	filters.UserID = tData.User.ID
 
-	temp, err := data.TempQuery(DATABASE_ACCESS, filters)
+	temp, err := data.TempQuery(DATABASE_ACCESS, filters, tData.User.RoleID)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -144,8 +158,12 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Checks if a topic with this id exists
-	if exists, err := data.TopicExists(DATABASE_ACCESS, topicID); !exists || err != nil {
+	if topic, err := data.GetBaseTopicData(DATABASE_ACCESS, topicID); err != nil {
 		notFoundHandler(w, r)
+		return
+	} else if !data.CheckReadPermission(topic, tData.User.RoleID) {
+		notAllowedHandler(w, r)
+		return
 	}
 
 	// Reload template if user clicks on another page
@@ -156,7 +174,8 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Loads categories for left nav
-	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
+
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 
 	tData.Topic, err = data.QuerySingleTopicData(DATABASE_ACCESS, topicID, tData.User.ID)
@@ -180,6 +199,11 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
 	tData.PageTitle = "New Topic"
 
+	if tData.User.RoleID < 0 || tData.User.RoleID > 2 {
+		notAllowedHandler(w, r)
+		return
+	}
+
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topic_view.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
 	tmpl.Execute(w, tData)
 }
@@ -200,22 +224,22 @@ func userHandler(w http.ResponseWriter, r *http.Request) {
 
 func privacyHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
-	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
+
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 	tData.PageTitle = "Privacy Policy"
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/header.html", "templates/views/privacy.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
-	err := tmpl.Execute(w, tData)
-	fmt.Println(err)
+	tmpl.Execute(w, tData)
 }
 
 func tosHandler(w http.ResponseWriter, r *http.Request) {
 	tData := getSession(r)
-	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS)
+	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
+
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
 	tData.PageTitle = "Forum Guidelines"
 
 	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/components/header.html", "templates/views/tos.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
-	err := tmpl.Execute(w, tData)
-	fmt.Println(err)
+	tmpl.Execute(w, tData)
 }

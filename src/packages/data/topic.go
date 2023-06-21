@@ -7,23 +7,24 @@ import (
 	"strings"
 )
 
-func TopicExists(dba utils.DB_Access, id int) (bool, error) {
+func CheckReadPermission(temptopic TempTopic, roleID int) bool {
+	return temptopic.Permissions.MinReadRole >= int64(roleID) && temptopic.CatPermissions.MinReadRole >= int64(roleID)
+}
+
+func GetBaseTopicData(dba utils.DB_Access, id int) (tempTopic TempTopic, err error) {
 	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
-		return false, err
+		return tempTopic, err
 	}
 	defer db.Close()
 
-	var result int
-	err = db.QueryRow(`SELECT COUNT(*) FROM topics WHERE id = ?`, id).Scan(&result)
+	err = db.QueryRow(`SELECT t.id, t.min_read_role, c.min_read_role FROM topics AS t JOIN categories AS c ON t.category_id = c.id WHERE t.id = ?`, id).Scan(&tempTopic.ID, &tempTopic.Permissions.MinReadRole,
+		&tempTopic.CatPermissions.MinReadRole)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return false, nil
-		}
-		return false, err
+		return tempTopic, err
 	}
 
-	return (result > 0), nil
+	return tempTopic, nil
 }
 
 func QuerySingleTopicData(dba utils.DB_Access, topicID int, userID int) (data TempTopic, err error) {
@@ -37,7 +38,7 @@ func QuerySingleTopicData(dba utils.DB_Access, topicID int, userID int) (data Te
 	defer db.Close()
 
 	// ?Get the base data of the topic (without the data of the first post)
-	row := db.QueryRow(`SELECT t.id, c.name AS "category", t.title, GROUP_CONCAT(DISTINCT tags.name SEPARATOR ";") as "tags", t.is_closed, t.is_pinned, t.is_archived, t.min_read_role, t.min_write_role,
+	row := db.QueryRow(`SELECT t.id, c.name AS "category", t.title, GROUP_CONCAT(DISTINCT tags.name SEPARATOR ";") as "tags", t.is_closed, t.is_pinned, t.is_archived, t.min_read_role, t.min_write_role, c.min_read_role, c.min_write_role,
 	(SELECT COUNT(p.id) from posts as p WHERE p.id != tfp.post_id AND p.topic_id = t.id) as "answer_count"
 	FROM topics AS t
 	JOIN topic_first_posts AS tfp ON tfp.topic_id = t.id
@@ -48,7 +49,7 @@ func QuerySingleTopicData(dba utils.DB_Access, topicID int, userID int) (data Te
 	WHERE t.id = ?
     GROUP BY t.id`, topicID)
 	row.Scan(&data.ID, &data.Category, &data.Title, &tempTags, &data.State.IsClosed, &data.State.IsPinned, &data.State.IsArchived,
-		&data.Permissions.MinReadRole, &data.Permissions.MinWriteRole, &data.AnswerCount)
+		&data.Permissions.MinReadRole, &data.Permissions.MinWriteRole, &data.CatPermissions.MinReadRole, &data.CatPermissions.MinWriteRole, &data.AnswerCount)
 
 	if tempTags.Valid {
 		data.Tags = strings.Split(tempTags.String, ";")

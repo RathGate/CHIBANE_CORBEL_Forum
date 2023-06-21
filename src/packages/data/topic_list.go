@@ -27,17 +27,18 @@ type Topic struct {
 }
 
 type TempTopic struct {
-	ID          int64           `json:"id"`
-	Title       string          `json:"title"`
-	CategoryID  int             `json:"category_id"`
-	Category    string          `json:"category"`
-	FirstPost   TempPost        `json:"first_post"`
-	AnswerCount int64           `json:"answer_count"`
-	Tags        []string        `json:"tags"`
-	Answers     []TempPost      `json:"answers"`
-	State       TempState       `json:"topic_state"`
-	Permissions TempPermissions `json:"permissions"`
-	Score       int
+	ID             int64           `json:"id"`
+	Title          string          `json:"title"`
+	CategoryID     int             `json:"category_id"`
+	Category       string          `json:"category"`
+	FirstPost      TempPost        `json:"first_post"`
+	AnswerCount    int64           `json:"answer_count"`
+	Tags           []string        `json:"tags"`
+	Answers        []TempPost      `json:"answers"`
+	State          TempState       `json:"topic_state"`
+	Permissions    TempPermissions `json:"permissions"`
+	CatPermissions TempPermissions `json:"category_permission"`
+	Score          int
 }
 type TempPost struct {
 	ID                  int64         `json:"id"`
@@ -189,7 +190,7 @@ func (t *TopicFilters) CorrectFilters() {
 }
 
 // Retrieves all base data from topics given specific filters, and their total count.
-func GetTopicListData(dba utils.DB_Access, filters TopicFilters) (TopicData, error) {
+func GetTopicListData(dba utils.DB_Access, filters TopicFilters, roleID int) (TopicData, error) {
 	var tempTags sql.NullString
 	data := TopicData{Filters: filters}
 
@@ -200,7 +201,7 @@ func GetTopicListData(dba utils.DB_Access, filters TopicFilters) (TopicData, err
 	defer db.Close()
 
 	// ?Gets the total number of rows, regardless of limit and offset filters
-	row := db.QueryRow(QueryTopicCount(data.Filters))
+	row := db.QueryRow(QueryTopicCount(data.Filters, roleID))
 
 	if err := row.Scan(&data.Filters.Results.ResultCount); err != nil {
 		return data, err
@@ -293,8 +294,8 @@ func QueryTopicsData(t TopicFilters) string {
 }
 
 // Queries total topic count from database
-func QueryTopicCount(t TopicFilters) string {
-	var stringBuilder = []string{`SELECT COUNT(*) from topics as t 
+func QueryTopicCount(t TopicFilters, roleID int) string {
+	var stringBuilder = []string{fmt.Sprintf(`SELECT COUNT(*) from topics as t 
 	JOIN (SELECT t.* FROM topic_first_posts AS tfp 
     JOIN topics AS t ON t.id = tfp.topic_id
 	JOIN categories AS c ON c.id = t.category_id
@@ -306,7 +307,7 @@ func QueryTopicCount(t TopicFilters) string {
         GROUP BY topic_id) p2
 	ON p1.topic_id = p2.topic_id AND p1.creation_date = p2.max_date) AS lp ON lp.topic_id = t.id
 	LEFT JOIN posts AS p ON p.id = tfp.post_id
-	WHERE t.is_archived != 1`}
+	WHERE t.is_archived != 1 AND c.min_read_role >= %d AND t.min_read_role >= %d`, roleID, roleID)}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}
@@ -314,7 +315,6 @@ func QueryTopicCount(t TopicFilters) string {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND t.category_id = %d", t.CategoryID))
 	}
 	stringBuilder = append(stringBuilder, "GROUP BY t.id) as temp on temp.id = t.id")
-	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }
 
@@ -323,18 +323,17 @@ type TempData struct {
 	Filters TopicFilters
 }
 
-func TempQuery(dba utils.DB_Access, filters TopicFilters) (TempData, error) {
+func TempQuery(dba utils.DB_Access, filters TopicFilters, roleID int) (TempData, error) {
 	data := TempData{Filters: filters}
 
 	db, err := sql.Open("mysql", dba.ToString())
 	if err != nil {
-		fmt.Println(err)
 		return data, err
 	}
 	defer db.Close()
 
 	// ?Gets the total number of rows, regardless of limit and offset filters
-	row := db.QueryRow(QueryTopicCount(data.Filters))
+	row := db.QueryRow(QueryTopicCount(data.Filters, roleID))
 
 	if err := row.Scan(&data.Filters.Results.ResultCount); err != nil {
 		return data, err
@@ -353,9 +352,8 @@ func TempQuery(dba utils.DB_Access, filters TopicFilters) (TempData, error) {
 	}
 
 	// ?Gets the base data for all topics with all filters applied, including limit and offset
-	rows, err := db.Query(Temp(data.Filters))
+	rows, err := db.Query(Temp(data.Filters, roleID))
 	if err != nil {
-		fmt.Println(err)
 		return data, err
 	}
 
@@ -368,7 +366,6 @@ func TempQuery(dba utils.DB_Access, filters TopicFilters) (TempData, error) {
 		err := rows.Scan(&tempTopic.ID, &tempTopic.Title, &tempTopic.Category, &tempTags, &tempTopic.FirstPost.Content, &tempTopic.FirstPost.ID, &tempOP.ID, &tempOP.Username, &tempOP.RoleID, &tempOP.Role, &tempTopic.FirstPost.Timeline.CreationDate,
 			&lastPost.ID, &tempLP.ID, &tempLP.Username, &tempLP.RoleID, &tempLP.Role, &lastPost.Timeline.CreationDate, &tempTopic.AnswerCount, &tempTopic.Score, &tempTopic.FirstPost.CurrentUserReaction, &tempTopic.State.IsClosed, &tempTopic.State.IsPinned)
 		if err != nil {
-			fmt.Println(err)
 			return data, err
 		}
 
@@ -390,7 +387,7 @@ func TempQuery(dba utils.DB_Access, filters TopicFilters) (TempData, error) {
 	return data, nil
 }
 
-func Temp(t TopicFilters) string {
+func Temp(t TopicFilters, roleID int) string {
 	var orderByValues = map[string]string{
 		"score":  "ORDER BY score DESC",
 		"newest": "ORDER BY lp_date DESC",
@@ -422,7 +419,7 @@ LEFT JOIN reactions AS re ON re.id = pr.reaction_id
 LEFT JOIN users AS u ON u.id = p.user_id
 LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 
-	stringBuilder = append(stringBuilder, "WHERE t.is_archived != 1")
+	stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.is_archived != 1 AND c.min_read_role >= %d AND t.min_read_role >= %d", roleID, roleID))
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}
@@ -439,6 +436,5 @@ LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 		stringBuilder = append(stringBuilder, fmt.Sprintf("LIMIT %d OFFSET %d", t.Limit, t.Limit*(t.CurrentPage-1)))
 	}
 
-	fmt.Println(strings.Join(stringBuilder, "\n"))
 	return strings.Join(stringBuilder, "\n")
 }

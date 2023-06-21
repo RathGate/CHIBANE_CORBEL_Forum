@@ -31,6 +31,9 @@ img {
     color: #e63c3c;
     letter-spacing: 5px;
 }
+.f0f.forbidden {
+    color: var(--color-lighter-purple);
+}
 @media screen and (max-width: 1150px) {
     .duck {
         transform: translateY(35%);

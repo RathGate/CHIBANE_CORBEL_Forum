@@ -24,6 +24,7 @@
             </div></a>
         </div>
     </div>
+    {{ if or (eq .User.RoleID 2) (eq .User.RoleID 1)}}
     <div class="side-menu">
         <div class="title">
             <div class="menu-icon">
@@ -38,6 +39,7 @@
             </div></a>
         </div>
     </div>
+    {{ end }}
     <div class="side-menu">
         <div class="title">
             <div class="menu-icon">
