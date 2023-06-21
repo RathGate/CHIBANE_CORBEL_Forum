@@ -90,8 +90,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 	tData.PageTitle = "Topics"
 	tData.Categories, _ = data.GetCategories(DATABASE_ACCESS, tData.User.ID)
 	tData.TopTrainers, _ = data.QueryTopTrainers(DATABASE_ACCESS, tData.User.ID)
-
-	filters := data.RetrieveFilters(r)
+	filters := data.RetrieveFilters(r, tData.User.IsAuthenticated)
 
 	if filters.CategoryID != 0 {
 		cat, err := data.GetCategoryData(DATABASE_ACCESS, filters.CategoryID)

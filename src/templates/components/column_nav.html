@@ -18,10 +18,12 @@
                 <div class="icon"><span class="material-symbols-outlined">travel_explore</span></div>
                 <span class="name">Search</span>
             </div></a>
-            <a><div class="menu-option {{ if eq .PageTitle "My Topics" }}active{{end}}">
+            {{ if .User.IsAuthenticated }}
+            <a href="/topics?me"><div class="menu-option {{ if eq .PageTitle "My Topics" }}active{{end}}">
                 <div class="icon"><span class="material-symbols-outlined">topic</span></div>
                 <span class="name">My Topics</span>
             </div></a>
+            {{ end }}
         </div>
     </div>
     {{ if or (eq .User.RoleID 2) (eq .User.RoleID 1)}}

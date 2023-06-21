@@ -26,12 +26,14 @@
                         <span class="name">Search</span>
                     </div>
                 </a>
-                <a>
+                {{ if .User.IsAuthenticated }}
+                <a href="/topics?me">
                     <div class="menu-option" {{ if eq .PageTitle "My Topics" }}active{{end}}>
                         <div class="icon"><span class="material-symbols-outlined">topic</span></div>
                         <span class="name">My Topics</span>
                     </div>
                 </a>
+                {{ end }}
             </div>
         </div>
         <div class="side-menu">

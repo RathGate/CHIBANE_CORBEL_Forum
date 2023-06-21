@@ -110,7 +110,8 @@ type TopicFilters struct {
 	Limit       int    `json:"limit"`
 	CategoryID  int    `json:"category_id"`
 	ApplyLimit  bool
-	UserID      int `json:"user_id"`
+	UserID      int  `json:"user_id"`
+	UseUserID   bool `json:"use_user_id"`
 	Results     struct {
 		PageCount   int `json:"pageCount"`
 		ResultCount int `json:"resultCount"`
@@ -140,7 +141,7 @@ var DefaultTopicFilters = TopicFilters{
 
 // Retrieves the filters from the URL if GET request, and from form if POST request.
 // Note: if a specific filter has no value, DefaultTopicFilters values are used.
-func RetrieveFilters(r *http.Request) (result TopicFilters) {
+func RetrieveFilters(r *http.Request, isAuthenticated bool) (result TopicFilters) {
 	var tempDate string
 	var tempCat string
 	if r.Method == "POST" {
@@ -149,7 +150,13 @@ func RetrieveFilters(r *http.Request) (result TopicFilters) {
 		result.Limit = utils.GetIntFromString(r.FormValue("limit"))
 		tempDate = r.FormValue("timePeriod")
 		tempCat = r.FormValue("category")
+		if r.FormValue("useuserid") == "true" && isAuthenticated {
+			result.UseUserID = true
+		}
 	} else {
+		if value, ok := r.URL.Query()["me"]; ok && value[0] == "" && isAuthenticated {
+			result.UseUserID = true
+		}
 		result.OrderBy = r.URL.Query().Get("order")
 		result.CurrentPage = utils.GetIntFromString(r.URL.Query().Get("page"))
 		result.Limit = utils.GetIntFromString(r.URL.Query().Get("results"))
@@ -168,6 +175,7 @@ func RetrieveFilters(r *http.Request) (result TopicFilters) {
 	}
 	result.ApplyLimit = true
 	result.CorrectFilters()
+
 	return result
 }
 
@@ -308,6 +316,9 @@ func QueryTopicCount(t TopicFilters, roleID int) string {
 	ON p1.topic_id = p2.topic_id AND p1.creation_date = p2.max_date) AS lp ON lp.topic_id = t.id
 	LEFT JOIN posts AS p ON p.id = tfp.post_id
 	WHERE t.is_archived != 1 AND c.min_read_role >= %d AND t.min_read_role >= %d`, roleID, roleID)}
+	if t.UseUserID {
+		stringBuilder = append(stringBuilder, fmt.Sprintf("AND p.user_id = %d", t.UserID))
+	}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}
@@ -383,7 +394,6 @@ func TempQuery(dba utils.DB_Access, filters TopicFilters, roleID int) (TempData,
 
 		data.Topics = append(data.Topics, *tempTopic)
 	}
-
 	return data, nil
 }
 
@@ -420,6 +430,9 @@ LEFT JOIN users AS u ON u.id = p.user_id
 LEFT JOIN roles AS r ON r.id = u.role_id`, t.UserID)}
 
 	stringBuilder = append(stringBuilder, fmt.Sprintf("WHERE t.is_archived != 1 AND c.min_read_role >= %d AND t.min_read_role >= %d", roleID, roleID))
+	if t.UseUserID {
+		stringBuilder = append(stringBuilder, fmt.Sprintf("AND p.user_id = %d", t.UserID))
+	}
 	if t.TimePeriod > 0 {
 		stringBuilder = append(stringBuilder, fmt.Sprintf("AND lp.creation_date >= DATE_SUB(SYSDATE(), INTERVAL %d DAY)", t.TimePeriod))
 	}

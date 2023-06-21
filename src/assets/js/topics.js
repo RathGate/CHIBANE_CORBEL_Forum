@@ -13,6 +13,12 @@ allFilterInputs.forEach(element => {
     })
 })
 
+function urlContainsMe() {
+    const urlparam = new URLSearchParams(window.location.search)
+    return (urlparam.has("me") && !urlparam.get('me'))
+}
+
+
 function addPaginationListeners() {
     let pageInputs = document.querySelectorAll('input[name="page"]')
     pageInputs.forEach(element => {
@@ -30,7 +36,8 @@ function refreshTopics(pageIncrementation = 0) {
             timePeriod: dateSelect.value,
             order: orderSelect.value,
             page: getInputValueByName("page"),
-            category: retrieveCategory()
+            category: retrieveCategory(),
+            useuserid: urlContainsMe()
         }, {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
