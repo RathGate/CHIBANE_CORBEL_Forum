@@ -113,11 +113,26 @@
                 {{ end}}
             </div>
             <div class="new-answer">
-                <textarea name="" id="" cols="30" rows="10"></textarea>
+                {{ if .User.IsAuthenticated }}
+                    <div class="answer-authenticated">
+                        <div class="text-zone">
+
+                            <div class="intro">
+                                <i class="fa-solid fa-reply"></i>
+                                <span>Replying as <span class="username">{{.User.Username}}</span></span>
+                                <div class="pfp"><img src="/assets/img/pfp.png" alt=""></div>
+                            </div>
+                            <textarea class="answer" name="" id="" cols="30" rows="10"></textarea>
+                        </div>
+                        <div class="a-error"></div>
+                        <div class="send-btn send-answer"><i class="fa-regular fa-paper-plane"></i>Send </div>
+                    </div>
+                {{ end }}
             </div>
         </div>
         {{ template "column_ads" . }}
     </section>
 </main>
 {{ template "footer" }}
+<script src="/assets/js/topic.js"></script>
 {{ end }}

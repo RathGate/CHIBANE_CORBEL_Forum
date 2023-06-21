@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"forum/packages/credentials"
 	"forum/packages/data"
 	"forum/packages/utils"
@@ -114,7 +113,9 @@ func topicsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html", "templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html", "templates/components/footer.html", "templates/components/mobile-menus.html"})
+	tmpl := generateTemplate("base.html", []string{"templates/base.html", "templates/views/topics.html", "templates/components/header.html", "templates/components/topic_list.html", "templates/components/pagination.html",
+		"templates/components/column_nav.html", "templates/components/popup_register.html", "templates/components/popup_login.html", "templates/components/new_topic.html", "templates/components/column_ads.html",
+		"templates/components/footer.html", "templates/components/mobile-menus.html", "templates/components/noresult.html"})
 	tmpl.Execute(w, tData)
 
 }
@@ -167,9 +168,12 @@ func topicHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Reload template if user clicks on another page
 	if r.Method == "POST" {
-		// TODO
-		fmt.Println("Soon")
-		// Return
+		r.ParseForm()
+		content := r.FormValue("content")
+		data := data.AddAnswerToTopic(DATABASE_ACCESS, topicID, tData.User.ID, tData.User.RoleID, content)
+		jsonValues, _ := json.Marshal(data)
+		w.Write(jsonValues)
+		return
 	}
 
 	// Loads categories for left nav

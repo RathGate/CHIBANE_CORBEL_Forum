@@ -1,57 +1,61 @@
 {{ define "topic_list" }}
     <div class="topics-container">
-        {{ range .Topics }}
-        <a href="/topic/{{.ID}}">
-        <div class="topic-item">
-            <div class="ti-score {{ if gt .Score 0}}positive{{ else if lt .Score 0}}negative{{end}}{{ if .FirstPost.CurrentUserReaction.Valid}}voted{{end}}">
-                <i class="fa-solid fa-arrow-up"></i>
-                <span>{{ .Score }}</span>
-                <i class="fa-solid fa-arrow-down"></i>
-            </div>
-            <div class="ti-content">
-                <div class="ti-title">{{.Title}}</div>
-                <div class="ti-tag-container">
-                    <div class="ti-tag-item category">{{.Category}}</div>
-                    {{ range .Tags }}
-                    <div class="ti-tag-item">{{ . }}</div>
-                    {{ end }}
+        {{ if .Topics }}
+            {{ range .Topics }}
+            <a href="/topic/{{.ID}}">
+            <div class="topic-item">
+                <div class="ti-score {{ if gt .Score 0}}positive{{ else if lt .Score 0}}negative{{end}}{{ if .FirstPost.CurrentUserReaction.Valid}}voted{{end}}">
+                    <i class="fa-solid fa-arrow-up"></i>
+                    <span>{{ .Score }}</span>
+                    <i class="fa-solid fa-arrow-down"></i>
                 </div>
-                <div class="ti-body">{{.FirstPost.Content}}</div>
-                <div class="ti-footer">
-                    <div class="left">
-                        <div class="ti-profile">
-                            {{ $LastPost := index .Answers 0 }}
-                            {{ if ne $LastPost.ID .FirstPost.ID }}
-                                {{ if not .FirstPost.User.IsDeleted }}
-                                <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{$LastPost.User.Username}}"
-                                        alt="User profile picture"></div>
-                                <div class="username"><span class="faded">Answered by </span>{{$LastPost.User.Username}}</div>
-                                {{ else }}
-                                <div class="pfp unknown"></div>
-                                <div class="username faded">Answered by <span class="bold">deleted user</span></div>
-                                {{ end }}
-                                </div>
-                                <div class="ti-time faded">{{ getTimeSincePosted $LastPost.Timeline.CreationDate.Time}}</div>
-                            {{ else }}
-                                {{ if not .FirstPost.User.IsDeleted }}
-                                <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.FirstPost.User.Username}}"
-                                        alt="User profile picture"></div>
-                                <div class="username"><span class="faded">Posted by </span>{{.FirstPost.User.Username}}</div>
-                                {{ else }}
-                                <div class="pfp unknown"></div>
-                                <div class="username faded">Posted by <span class="bold">deleted user</span></div>
-                                {{ end }}
-                                </div>
-                                <div class="ti-time faded">{{ getTimeSincePosted .FirstPost.Timeline.CreationDate.Time}}</div>
-                            {{end}}
-                        
+                <div class="ti-content">
+                    <div class="ti-title">{{.Title}}</div>
+                    <div class="ti-tag-container">
+                        <div class="ti-tag-item category">{{.Category}}</div>
+                        {{ range .Tags }}
+                        <div class="ti-tag-item">{{ . }}</div>
+                        {{ end }}
                     </div>
-                    <div class="right">
-                        <div class="answers faded"><i class="fa-regular fa-comments"></i>{{.AnswerCount}}</div>
+                    <div class="ti-body">{{.FirstPost.Content}}</div>
+                    <div class="ti-footer">
+                        <div class="left">
+                            <div class="ti-profile">
+                                {{ $LastPost := index .Answers 0 }}
+                                {{ if ne $LastPost.ID .FirstPost.ID }}
+                                    {{ if not .FirstPost.User.IsDeleted }}
+                                    <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{$LastPost.User.Username}}"
+                                            alt="User profile picture"></div>
+                                    <div class="username"><span class="faded">Answered by </span>{{$LastPost.User.Username}}</div>
+                                    {{ else }}
+                                    <div class="pfp unknown"></div>
+                                    <div class="username faded">Answered by <span class="bold">deleted user</span></div>
+                                    {{ end }}
+                                    </div>
+                                    <div class="ti-time faded">{{ getTimeSincePosted $LastPost.Timeline.CreationDate.Time}}</div>
+                                {{ else }}
+                                    {{ if not .FirstPost.User.IsDeleted }}
+                                    <div class="pfp"><img src="https://lorempokemon.fakerapi.it/pokemon/200/{{.FirstPost.User.Username}}"
+                                            alt="User profile picture"></div>
+                                    <div class="username"><span class="faded">Posted by </span>{{.FirstPost.User.Username}}</div>
+                                    {{ else }}
+                                    <div class="pfp unknown"></div>
+                                    <div class="username faded">Posted by <span class="bold">deleted user</span></div>
+                                    {{ end }}
+                                    </div>
+                                    <div class="ti-time faded">{{ getTimeSincePosted .FirstPost.Timeline.CreationDate.Time}}</div>
+                                {{end}}
+                            
+                        </div>
+                        <div class="right">
+                            <div class="answers faded"><i class="fa-regular fa-comments"></i>{{.AnswerCount}}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div></a>
+            </div></a>
+            {{ end }}
+        {{ else }}
+        {{ template "no_result" "No result to show here..."}}
         {{ end }}
     </div>
     {{ template "pagination" .Filters }}

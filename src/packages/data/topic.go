@@ -3,12 +3,18 @@ package data
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"forum/packages/utils"
+	"net/http"
 	"strings"
 )
 
 func CheckReadPermission(temptopic TempTopic, roleID int) bool {
 	return temptopic.Permissions.MinReadRole >= int64(roleID) && temptopic.CatPermissions.MinReadRole >= int64(roleID)
+}
+func CheckWritePermission(temptopic TempTopic, roleID int) bool {
+	fmt.Println(temptopic.Permissions.MinWriteRole, temptopic.CatPermissions.MinWriteRole, roleID)
+	return temptopic.Permissions.MinWriteRole >= int64(roleID) && temptopic.CatPermissions.MinWriteRole >= int64(roleID)
 }
 
 func GetBaseTopicData(dba utils.DB_Access, id int) (tempTopic TempTopic, err error) {
@@ -18,8 +24,8 @@ func GetBaseTopicData(dba utils.DB_Access, id int) (tempTopic TempTopic, err err
 	}
 	defer db.Close()
 
-	err = db.QueryRow(`SELECT t.id, t.min_read_role, c.min_read_role FROM topics AS t JOIN categories AS c ON t.category_id = c.id WHERE t.id = ?`, id).Scan(&tempTopic.ID, &tempTopic.Permissions.MinReadRole,
-		&tempTopic.CatPermissions.MinReadRole)
+	err = db.QueryRow(`SELECT t.id, t.min_read_role, t.min_write_role, c.min_read_role, c.min_write_role FROM topics AS t JOIN categories AS c ON t.category_id = c.id WHERE t.id = ?`, id).Scan(&tempTopic.ID, &tempTopic.Permissions.MinReadRole,
+		&tempTopic.Permissions.MinWriteRole, &tempTopic.CatPermissions.MinReadRole, &tempTopic.CatPermissions.MinWriteRole)
 	if err != nil {
 		return tempTopic, err
 	}
@@ -168,4 +174,62 @@ func GetAllowedRoles(p TempPermissions) map[string][]int {
 		result["write"] = append(result["write"], i)
 	}
 	return result
+}
+
+type AnswerValidation struct {
+	Status int    `json:"status"`
+	Error  string `json:"error_msg"`
+}
+
+func AddAnswerToTopic(dba utils.DB_Access, topicID, userID, roleID int, content string) AnswerValidation {
+	topic, err := GetBaseTopicData(dba, topicID)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return AnswerValidation{
+				Status: http.StatusBadRequest,
+				Error:  "An error occurred : the topic might have been deleted",
+			}
+		}
+		return AnswerValidation{
+			Status: http.StatusInternalServerError,
+			Error:  "An error occurred : try again later",
+		}
+	}
+	if !CheckWritePermission(topic, roleID) {
+		return AnswerValidation{
+			Status: http.StatusBadRequest,
+			Error:  "An error occurred : write permissions missing",
+		}
+	}
+	db, err := sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/forum?parseTime=true")
+	if err != nil {
+		return AnswerValidation{
+			Status: http.StatusBadRequest,
+			Error:  "An error occurred : try again later",
+		}
+	}
+	defer db.Close()
+
+	// Inserts new topic into topics table
+	result, err := db.Exec("INSERT INTO posts (topic_id, user_id, content) VALUES (?, ?, ?)", topic.ID, userID, content)
+	if err != nil {
+		fmt.Println(err)
+		return AnswerValidation{
+			Status: http.StatusInternalServerError,
+			Error:  "An error occurred : try again later",
+		}
+	}
+
+	// Gets the ID of the newly created topic
+	if _, err = result.LastInsertId(); err != nil {
+		return AnswerValidation{
+			Status: http.StatusInternalServerError,
+			Error:  "An error occurred : try again later",
+		}
+	}
+
+	return AnswerValidation{
+		Status: http.StatusOK,
+	}
+
 }
