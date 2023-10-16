@@ -4,7 +4,7 @@
 
 ## About
 
-Project submitted for a full-stack course, realised by [Eva Chibane ](https://github.com/evzs) and [Marianne Corbel](https://github.com/RathGate). This project is intended to be a forum about the Pokémon video-games series and the subjects that revolve around it. Users can log in, create topics, post answers and react to other users' posts !
+Project submitted for a full-stack course, realised by [evzs](https://github.com/evzs) and [RathGate](https://github.com/RathGate). This project is intended to be a forum about the Pokémon video-games series and the subjects that revolve around it. Users can log in, create topics, post answers and react to other users' posts !
 
 Technical documentation: [HERE](https://github.com/RathGate/CHIBANE_CORBEL_Forum/tree/main/docs) ( /src/documentation )
 
