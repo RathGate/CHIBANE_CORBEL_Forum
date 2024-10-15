@@ -1,7 +1,6 @@
 # Trainers' Corner (Forum)
 
 ![Topics page of the website](https://i.postimg.cc/X7YSqZtt/Capture-d-cran-2024-10-15-182121.png)
-![Mobile version](https://i.postimg.cc/tgyzR6Mx/Capture-d-cran-2024-10-15-182419.png)
 
 ## About
 
@@ -57,3 +56,6 @@ The website should be available on `localhost:8080`. In case of port collision, 
 Change the numerical value after the colon with any other port number.
 
 Enjoy ♫
+
+
+![Mobile version](https://i.postimg.cc/tgyzR6Mx/Capture-d-cran-2024-10-15-182419.png)
