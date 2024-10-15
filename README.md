@@ -58,4 +58,4 @@ Change the numerical value after the colon with any other port number.
 Enjoy ♫
 
 
-![Mobile version](https://i.postimg.cc/tgyzR6Mx/Capture-d-cran-2024-10-15-182419.png)
+![Mobile version](https://i.postimg.cc/nchrxh2h/Capture-d-cran-2024-10-15-182757.png)
